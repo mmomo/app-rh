@@ -59,7 +59,7 @@ export function SeccionAumentos({ empleado, aumentos }: Props) {
           step="0.01"
           min="0"
         />
-        <Campo {...props('motivo')} etiqueta="Motivo" />
+        <Campo {...props('motivo')} etiqueta="Motivo del aumento" />
         <div className="acciones-formulario">
           <button type="submit" className="boton boton--primario">
             Registrar aumento

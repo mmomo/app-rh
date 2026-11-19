@@ -19,7 +19,7 @@ describe('aumentos salariales (A3, R2b)', () => {
     expect(vigente()).toHaveTextContent('$10,000.00')
 
     await user.type(screen.getByLabelText(/^Nuevo salario/), '11500')
-    await user.type(screen.getByLabelText(/^Motivo/), 'Evaluación anual')
+    await user.type(screen.getByLabelText(/^Motivo del aumento/), 'Evaluación anual')
     await user.click(screen.getByRole('button', { name: 'Registrar aumento' }))
 
     expect(vigente()).toHaveTextContent('$11,500.00')
@@ -27,7 +27,7 @@ describe('aumentos salariales (A3, R2b)', () => {
     expect(filas).toHaveLength(2)
     expect(filas[0]).toHaveTextContent('Salario inicial$10,000.00')
     expect(filas[1]).toHaveTextContent('Aumento: Evaluación anual$11,500.00 Vigente')
-    expect(screen.getByRole('status')).toHaveTextContent('Aumento registrado')
+    expect(screen.getByText(/^Aumento registrado/)).toHaveAttribute('role', 'status')
   })
 
   it('caso de prueba R2b: vigente $10,000, aumento a $9,500 → bloqueado', async () => {

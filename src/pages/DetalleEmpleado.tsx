@@ -1,5 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { SeccionAumentos } from '../components/SeccionAumentos'
+import { SeccionPermisos } from '../components/SeccionPermisos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { nombreCompleto } from '../domain/empleado'
@@ -11,7 +12,7 @@ import { NoEncontrado } from './NoEncontrado'
 export function DetalleEmpleado() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { empleados, aumentos } = useEstado()
+  const { empleados, aumentos, permisos } = useEstado()
   const empleado = empleados.find((e) => e.id === id)
 
   if (!empleado) return <NoEncontrado />
@@ -59,6 +60,7 @@ export function DetalleEmpleado() {
       </dl>
 
       <SeccionAumentos empleado={empleado} aumentos={aumentos} />
+      <SeccionPermisos empleado={empleado} permisos={permisos} />
     </section>
   )
 }

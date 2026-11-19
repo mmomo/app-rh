@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { Aumento, DatosEmpleado, Empleado } from '../domain/tipos'
+import type { Aumento, DatosEmpleado, Empleado, Permiso } from '../domain/tipos'
 import { almacenamientoLocal, type Almacenamiento, type Estado } from './almacenamiento'
 
 function nuevoId(): string {
@@ -43,6 +43,11 @@ export function crearStore(almacenamiento: Almacenamiento) {
       const aumento = { id: nuevoId(), ...datos }
       actualizar((e) => ({ ...e, aumentos: [...e.aumentos, aumento] }))
       return aumento
+    },
+    crearPermiso(datos: Omit<Permiso, 'id'>): Permiso {
+      const permiso = { id: nuevoId(), ...datos }
+      actualizar((e) => ({ ...e, permisos: [...e.permisos, permiso] }))
+      return permiso
     },
     /** Elimina al empleado junto con su historial de permisos y aumentos. */
     eliminarEmpleado(id: string) {

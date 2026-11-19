@@ -86,3 +86,11 @@ th { font-size: 0.9rem; color: var(--muted); }
   display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 999px;
   background: #e3ecfa; color: var(--primary); font-size: 0.8rem; font-weight: 700;
 }
+
+.grupo-opciones { border: none; padding: 0; margin: 0; min-width: 0; }
+.grupo-opciones legend { font-weight: 600; padding: 0; margin-bottom: 4px; }
+.opcion { display: flex; align-items: center; gap: 8px; min-height: 32px; font-weight: 400 !important; }
+.opcion input { width: 18px; height: 18px; min-height: 0; margin: 0; }
+td .etiqueta { margin-left: 0; }
+.etiqueta--con-goce { background: #e2f2e7; color: var(--success); }
+.etiqueta--sin-goce { background: #fbe9d8; color: #8a4500; }
