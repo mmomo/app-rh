@@ -76,7 +76,7 @@ type Aumento = {
 - Capa de repositorio (`src/data/`) detrás de una interfaz, para poder cambiar la persistencia sin tocar la UI.
 - Persistencia: **`localStorage`** (despliegue estático en Vercel). Los datos viven en el navegador de cada usuario.
 
-## 6. Plan de Construction (un commit por requerimiento)
+## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-19
 1. Scaffolding Vite + React + TS, Vitest, ESLint, estructura de carpetas.
 2. A4 — función de antigüedad + pruebas.
 3. A1 + R1 — CRUD de empleados con validación de obligatorios.
@@ -100,3 +100,10 @@ Los cambios se reflejan en `docs/requerimientos.md` v1.1.
 ## 8. Aprobación
 - Campos obligatorios del empleado (§4) confirmados: nombre, apellidos, puesto, departamento, fecha de ingreso y salario inicial; email y teléfono opcionales.
 - Plan de Construction (§6) aprobado el 2026-11-19.
+
+## 9. Decisiones tomadas durante Construction
+Detalles no especificados en los requerimientos, resueltos para mantener consistente el historial (pendientes de validar):
+- La fecha de un aumento no puede ser futura ni anterior al último aumento registrado; así el "salario vigente" (aumento más reciente) siempre coincide con el último monto capturado.
+- Si el empleado ya tiene aumentos, el salario inicial queda en solo lectura al editarlo (cambiarlo podría dejar un aumento menor que el salario anterior, contra R2b).
+- Al editar, la fecha de ingreso no puede quedar después del primer permiso o aumento (extensión de R2c).
+- Eliminar un empleado borra también sus permisos y aumentos, previa confirmación.
