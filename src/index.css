@@ -60,7 +60,7 @@ h2 { font-size: 1.2rem; margin: 24px 0 12px; }
 .campo--busqueda { max-width: 360px; margin-bottom: 16px; }
 .acciones, .acciones-formulario { display: flex; flex-wrap: wrap; gap: 8px; }
 
-.tabla-contenedor { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.tabla-contenedor { position: relative; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 tbody tr:last-child td { border-bottom: none; }
