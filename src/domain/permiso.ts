@@ -1,5 +1,5 @@
 import { MENSAJE_OBLIGATORIO } from './empleado'
-import { esFechaISOValida } from './fechas'
+import { esFechaISOValida, formatearFecha } from './fechas'
 import type { Errores, Permiso, TipoPermiso } from './tipos'
 
 export const ETIQUETA_TIPO_PERMISO: Record<TipoPermiso, string> = {
@@ -26,8 +26,8 @@ export function diasPermiso({ fechaInicio, fechaFin }: Pick<Permiso, 'fechaInici
   return Math.round((utc(fechaFin) - utc(fechaInicio)) / 86_400_000) + 1
 }
 
-/** R2a: la fecha de fin no puede ser anterior a la de inicio. */
-export function validarPermiso(form: FormPermiso): Errores<CampoPermiso> {
+/** R2a: la fecha de fin no puede ser anterior a la de inicio. R2c: el permiso no puede iniciar antes del ingreso. */
+export function validarPermiso(form: FormPermiso, fechaIngreso: string): Errores<CampoPermiso> {
   const errores: Errores<CampoPermiso> = {}
   if (form.tipo === '') errores.tipo = 'Selecciona el tipo de permiso.'
 
@@ -36,6 +36,9 @@ export function validarPermiso(form: FormPermiso): Errores<CampoPermiso> {
     else if (!esFechaISOValida(form[campo])) errores[campo] = 'Ingresa una fecha válida.'
   }
 
+  if (!errores.fechaInicio && form.fechaInicio < fechaIngreso) {
+    errores.fechaInicio = `El permiso no puede iniciar antes del ingreso (${formatearFecha(fechaIngreso)}).`
+  }
   if (!errores.fechaInicio && !errores.fechaFin && form.fechaFin < form.fechaInicio) {
     errores.fechaFin = 'La fecha de fin no puede ser anterior a la de inicio.'
   }

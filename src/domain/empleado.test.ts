@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { datosDesdeForm, formVacio, MENSAJE_OBLIGATORIO, validarEmpleado, type FormEmpleado } from './empleado'
+import {
+  datosDesdeForm,
+  fechaPrimerMovimiento,
+  formVacio,
+  MENSAJE_OBLIGATORIO,
+  validarEmpleado,
+  type FormEmpleado,
+} from './empleado'
 
 const formValido: FormEmpleado = {
   ...formVacio,
@@ -40,6 +47,35 @@ describe('validarEmpleado (R1)', () => {
 
   it('rechaza fechas inexistentes', () => {
     expect(validarEmpleado({ ...formValido, fechaIngreso: '2023-02-30' }).fechaIngreso).toBeDefined()
+  })
+})
+
+describe('validarEmpleado (R2c)', () => {
+  const HOY = '2026-11-19'
+
+  it('rechaza una fecha de ingreso futura y acepta hoy', () => {
+    expect(validarEmpleado({ ...formValido, fechaIngreso: '2026-11-20' }, { hoy: HOY }).fechaIngreso).toBe(
+      'La fecha de ingreso no puede ser futura.',
+    )
+    expect(validarEmpleado({ ...formValido, fechaIngreso: HOY }, { hoy: HOY })).toEqual({})
+  })
+
+  it('al editar, no permite mover el ingreso después del primer permiso o aumento', () => {
+    const errores = validarEmpleado({ ...formValido, fechaIngreso: '2024-06-01' }, { hoy: HOY, primerMovimiento: '2024-01-10' })
+    expect(errores.fechaIngreso).toMatch(/10\/01\/2024/)
+    expect(validarEmpleado(formValido, { hoy: HOY, primerMovimiento: '2024-01-10' })).toEqual({})
+  })
+})
+
+describe('fechaPrimerMovimiento', () => {
+  it('devuelve la fecha más antigua entre permisos y aumentos del empleado', () => {
+    const permisos = [{ id: 'p', empleadoId: 'e1', tipo: 'CON_GOCE' as const, fechaInicio: '2024-05-01', fechaFin: '2024-05-02' }]
+    const aumentos = [
+      { id: 'a', empleadoId: 'e1', fecha: '2024-02-01', salarioNuevo: 1 },
+      { id: 'b', empleadoId: 'e2', fecha: '2021-01-01', salarioNuevo: 1 },
+    ]
+    expect(fechaPrimerMovimiento('e1', permisos, aumentos)).toBe('2024-02-01')
+    expect(fechaPrimerMovimiento('e3', permisos, aumentos)).toBeUndefined()
   })
 })
 

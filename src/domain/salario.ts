@@ -36,7 +36,7 @@ export function salarioVigente(empleado: Empleado, aumentos: Aumento[]): number 
 export type FormAumento = { fecha: string; salarioNuevo: string; motivo: string }
 export type CampoAumento = keyof FormAumento
 
-/** R2b: el monto debe ser mayor a cero y mayor al salario vigente. */
+/** R2b: el monto debe ser mayor a cero y mayor al salario vigente. R2c: la fecha no puede ser anterior al ingreso. */
 export function validarAumento(
   form: FormAumento,
   empleado: Empleado,
@@ -50,6 +50,8 @@ export function validarAumento(
   if (form.fecha === '') errores.fecha = MENSAJE_OBLIGATORIO
   else if (!esFechaISOValida(form.fecha)) errores.fecha = 'Ingresa una fecha válida.'
   else if (form.fecha > hoy) errores.fecha = 'La fecha no puede ser futura.'
+  else if (form.fecha < empleado.fechaIngreso)
+    errores.fecha = `La fecha no puede ser anterior al ingreso (${formatearFecha(empleado.fechaIngreso)}).`
   else if (ultimo && form.fecha < ultimo.fecha)
     errores.fecha = `La fecha no puede ser anterior al último aumento (${formatearFecha(ultimo.fecha)}).`
 

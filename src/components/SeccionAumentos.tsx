@@ -49,7 +49,14 @@ export function SeccionAumentos({ empleado, aumentos }: Props) {
       <h2 id="titulo-aumentos">Aumentos salariales</h2>
 
       <form noValidate onSubmit={registrar} className="formulario formulario--linea" aria-label="Registrar aumento">
-        <Campo {...props('fecha')} etiqueta="Fecha del aumento" obligatorio type="date" />
+        <Campo
+          {...props('fecha')}
+          etiqueta="Fecha del aumento"
+          obligatorio
+          type="date"
+          min={empleado.fechaIngreso}
+          max={hoyISO()}
+        />
         <Campo
           {...props('salarioNuevo')}
           etiqueta="Nuevo salario (MXN)"

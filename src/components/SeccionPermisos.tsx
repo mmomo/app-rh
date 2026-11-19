@@ -32,7 +32,7 @@ export function SeccionPermisos({ empleado, permisos }: Props) {
 
   function registrar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const nuevosErrores = validarPermiso(form)
+    const nuevosErrores = validarPermiso(form, empleado.fechaIngreso)
     setErrores(nuevosErrores)
     const primero = Object.keys(nuevosErrores)[0]
     if (primero || form.tipo === '') {
@@ -85,8 +85,8 @@ export function SeccionPermisos({ empleado, permisos }: Props) {
             </p>
           )}
         </fieldset>
-        <Campo {...props('fechaInicio')} etiqueta="Fecha de inicio" obligatorio type="date" />
-        <Campo {...props('fechaFin')} etiqueta="Fecha de fin" obligatorio type="date" min={form.fechaInicio || undefined} />
+        <Campo {...props('fechaInicio')} etiqueta="Fecha de inicio" obligatorio type="date" min={empleado.fechaIngreso} />
+        <Campo {...props('fechaFin')} etiqueta="Fecha de fin" obligatorio type="date" min={form.fechaInicio || empleado.fechaIngreso} />
         <Campo {...props('motivo')} etiqueta="Motivo del permiso" />
         <div className="acciones-formulario">
           <button type="submit" className="boton boton--primario">

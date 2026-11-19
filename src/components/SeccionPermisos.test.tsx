@@ -58,3 +58,19 @@ describe('permisos (A2, R2a)', () => {
     expect(screen.getByLabelText('Con goce de sueldo')).toHaveFocus()
   })
 })
+
+describe('consistencia con la fecha de ingreso (R2c)', () => {
+  it('caso de prueba: ingreso 15/03/2020, permiso con inicio 01/01/2020 → bloqueado', async () => {
+    const ana = altaAna()
+    const { user } = renderApp(`/empleados/${ana.id}`)
+    await user.click(screen.getByLabelText('Con goce de sueldo'))
+    await user.type(screen.getByLabelText(/^Fecha de inicio/), '2020-01-01')
+    await user.type(screen.getByLabelText(/^Fecha de fin/), '2020-01-02')
+    await user.click(screen.getByRole('button', { name: 'Registrar permiso' }))
+
+    const inicio = screen.getByLabelText(/^Fecha de inicio/)
+    expect(inicio).toHaveAttribute('aria-invalid', 'true')
+    expect(inicio).toHaveAccessibleDescription('El permiso no puede iniciar antes del ingreso (15/03/2020).')
+    expect(store.getEstado().permisos).toEqual([])
+  })
+})

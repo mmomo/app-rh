@@ -4,18 +4,20 @@ import { Campo } from '../components/Campo'
 import { store, useEstado } from '../data/store'
 import {
   datosDesdeForm,
+  fechaPrimerMovimiento,
   formDesdeEmpleado,
   formVacio,
   validarEmpleado,
   type CampoEmpleado,
   type FormEmpleado,
 } from '../domain/empleado'
+import { hoyISO } from '../domain/fechas'
 import type { Errores } from '../domain/tipos'
 import { NoEncontrado } from './NoEncontrado'
 
 export function FormularioEmpleado() {
   const { id } = useParams()
-  const { empleados, aumentos } = useEstado()
+  const { empleados, aumentos, permisos } = useEstado()
   const existente = id ? empleados.find((e) => e.id === id) : undefined
 
   if (id && !existente) return <NoEncontrado />
@@ -25,13 +27,19 @@ export function FormularioEmpleado() {
       id={id}
       inicial={existente ? formDesdeEmpleado(existente) : formVacio}
       salarioBloqueado={aumentos.some((a) => a.empleadoId === id)}
+      primerMovimiento={id ? fechaPrimerMovimiento(id, permisos, aumentos) : undefined}
     />
   )
 }
 
-type PropsFormulario = { id?: string; inicial: FormEmpleado; salarioBloqueado: boolean }
+type PropsFormulario = {
+  id?: string
+  inicial: FormEmpleado
+  salarioBloqueado: boolean
+  primerMovimiento?: string
+}
 
-function Formulario({ id, inicial, salarioBloqueado }: PropsFormulario) {
+function Formulario({ id, inicial, salarioBloqueado, primerMovimiento }: PropsFormulario) {
   const navigate = useNavigate()
   const [form, setForm] = useState(inicial)
   const [errores, setErrores] = useState<Errores<CampoEmpleado>>({})
@@ -45,7 +53,7 @@ function Formulario({ id, inicial, salarioBloqueado }: PropsFormulario) {
 
   function guardar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const nuevosErrores = validarEmpleado(form)
+    const nuevosErrores = validarEmpleado(form, { primerMovimiento })
     setErrores(nuevosErrores)
     const primero = Object.keys(nuevosErrores)[0]
     if (primero) {
@@ -71,7 +79,13 @@ function Formulario({ id, inicial, salarioBloqueado }: PropsFormulario) {
         <Campo {...props('apellidos')} etiqueta="Apellidos" obligatorio autoComplete="family-name" />
         <Campo {...props('puesto')} etiqueta="Puesto" obligatorio />
         <Campo {...props('departamento')} etiqueta="Departamento" obligatorio />
-        <Campo {...props('fechaIngreso')} etiqueta="Fecha de ingreso" obligatorio type="date" />
+        <Campo
+          {...props('fechaIngreso')}
+          etiqueta="Fecha de ingreso"
+          obligatorio
+          type="date"
+          max={primerMovimiento && primerMovimiento < hoyISO() ? primerMovimiento : hoyISO()}
+        />
         <Campo
           {...props('salarioInicial')}
           etiqueta="Salario inicial (MXN)"

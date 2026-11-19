@@ -59,6 +59,10 @@ describe('validarAumento (R2b)', () => {
     expect(validarAumento({ ...form, salarioNuevo: '11500' }, ana, previos, HOY).salarioNuevo).toBeDefined()
   })
 
+  it('R2c: rechaza un aumento anterior a la fecha de ingreso', () => {
+    expect(validarAumento({ ...form, fecha: '2020-03-14' }, ana, [], HOY).fecha).toMatch(/anterior al ingreso/)
+  })
+
   it('rechaza fechas futuras o anteriores al último aumento', () => {
     expect(validarAumento({ ...form, fecha: '2026-12-01' }, ana, [], HOY).fecha).toBeDefined()
     const previos = [aumento('2026-06-01', 11000)]

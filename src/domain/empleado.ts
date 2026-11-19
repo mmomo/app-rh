@@ -1,5 +1,5 @@
-import { esFechaISOValida } from './fechas'
-import type { DatosEmpleado, Empleado, Errores } from './tipos'
+import { esFechaISOValida, formatearFecha, hoyISO } from './fechas'
+import type { Aumento, DatosEmpleado, Empleado, Errores, Permiso } from './tipos'
 
 /** Valores del formulario de empleado tal como se capturan (texto). */
 export type FormEmpleado = {
@@ -50,14 +50,40 @@ export function formDesdeEmpleado(e: Empleado): FormEmpleado {
   }
 }
 
-/** R1: los campos obligatorios no pueden quedar vacíos. R2b: el salario inicial debe ser mayor a 0. */
-export function validarEmpleado(form: FormEmpleado): Errores<CampoEmpleado> {
+/** Fecha más antigua entre los permisos y aumentos del empleado, si tiene alguno. */
+export function fechaPrimerMovimiento(empleadoId: string, permisos: Permiso[], aumentos: Aumento[]): string | undefined {
+  const fechas = [
+    ...permisos.filter((p) => p.empleadoId === empleadoId).map((p) => p.fechaInicio),
+    ...aumentos.filter((a) => a.empleadoId === empleadoId).map((a) => a.fecha),
+  ]
+  return fechas.sort()[0]
+}
+
+type OpcionesValidacion = {
+  hoy?: string
+  /** Al editar: fecha del primer permiso o aumento registrado. */
+  primerMovimiento?: string
+}
+
+/**
+ * R1: los campos obligatorios no pueden quedar vacíos.
+ * R2b: el salario inicial debe ser mayor a 0.
+ * R2c: la fecha de ingreso no puede ser futura ni posterior al historial ya registrado.
+ */
+export function validarEmpleado(
+  form: FormEmpleado,
+  { hoy = hoyISO(), primerMovimiento }: OpcionesValidacion = {},
+): Errores<CampoEmpleado> {
   const errores: Errores<CampoEmpleado> = {}
   for (const campo of OBLIGATORIOS) {
     if (form[campo].trim() === '') errores[campo] = MENSAJE_OBLIGATORIO
   }
   if (!errores.fechaIngreso && !esFechaISOValida(form.fechaIngreso)) {
     errores.fechaIngreso = 'Ingresa una fecha válida.'
+  } else if (!errores.fechaIngreso && form.fechaIngreso > hoy) {
+    errores.fechaIngreso = 'La fecha de ingreso no puede ser futura.'
+  } else if (!errores.fechaIngreso && primerMovimiento && form.fechaIngreso > primerMovimiento) {
+    errores.fechaIngreso = `Tiene permisos o aumentos desde el ${formatearFecha(primerMovimiento)}; la fecha de ingreso no puede ser posterior.`
   }
   if (!errores.salarioInicial) {
     const salario = Number(form.salarioInicial)
