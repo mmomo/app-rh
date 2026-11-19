@@ -1,6 +1,6 @@
 # Fase 1 — Inception: Sistema de Control de RR. HH.
 
-> Estado: **BORRADOR — pendiente de aprobación**
+> Estado: **APROBADO** (2026-11-19)
 > Fecha: 2026-11-19
 > Fuente: `docs/requerimientos.md` v1.0
 
@@ -97,6 +97,6 @@ type Aumento = {
 
 Los cambios se reflejan en `docs/requerimientos.md` v1.1.
 
-## 8. Pendiente de confirmar
-- Lista de campos obligatorios del empleado (§4): nombre, apellidos, puesto, departamento, fecha de ingreso y salario inicial; email y teléfono opcionales.
-- Aprobación del plan de Construction (§6).
+## 8. Aprobación
+- Campos obligatorios del empleado (§4) confirmados: nombre, apellidos, puesto, departamento, fecha de ingreso y salario inicial; email y teléfono opcionales.
+- Plan de Construction (§6) aprobado el 2026-11-19.
