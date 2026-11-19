@@ -1,0 +1,88 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { store, useEstado } from '../data/store'
+import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
+import { nombreCompleto } from '../domain/empleado'
+
+export function ListaEmpleados() {
+  const { empleados } = useEstado()
+  const [busqueda, setBusqueda] = useState('')
+
+  const termino = busqueda.trim().toLowerCase()
+  const visibles = empleados
+    .filter((e) => nombreCompleto(e).toLowerCase().includes(termino))
+    .sort((a, b) => nombreCompleto(a).localeCompare(nombreCompleto(b), 'es'))
+
+  function eliminar(id: string, nombre: string) {
+    if (window.confirm(`¿Eliminar a ${nombre}? Se borrará también su historial.`)) {
+      store.eliminarEmpleado(id)
+    }
+  }
+
+  return (
+    <section>
+      <div className="encabezado">
+        <h1>Empleados</h1>
+        <Link className="boton boton--primario" to="/empleados/nuevo">
+          Nuevo empleado
+        </Link>
+      </div>
+
+      <div className="campo campo--busqueda">
+        <label htmlFor="busqueda">Buscar por nombre</label>
+        <input id="busqueda" type="search" value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+      </div>
+
+      {empleados.length === 0 ? (
+        <p className="vacio">Aún no hay empleados registrados.</p>
+      ) : visibles.length === 0 ? (
+        <p className="vacio">Ningún empleado coincide con “{busqueda}”.</p>
+      ) : (
+        <div className="tabla-contenedor">
+          <table>
+            <caption className="sr-only">Lista de empleados</caption>
+            <thead>
+              <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Puesto</th>
+                <th scope="col">Departamento</th>
+                <th scope="col">Antigüedad</th>
+                <th scope="col">
+                  <span className="sr-only">Acciones</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {visibles.map((e) => {
+                const nombre = nombreCompleto(e)
+                return (
+                  <tr key={e.id}>
+                    <td>
+                      <Link to={`/empleados/${e.id}`}>{nombre}</Link>
+                    </td>
+                    <td>{e.puesto}</td>
+                    <td>{e.departamento}</td>
+                    <td>{formatearAntiguedad(calcularAntiguedad(e.fechaIngreso))}</td>
+                    <td className="acciones">
+                      <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
+                        Editar
+                      </Link>
+                      <button
+                        type="button"
+                        className="boton boton--peligro"
+                        onClick={() => eliminar(e.id, nombre)}
+                        aria-label={`Eliminar a ${nombre}`}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  )
+}

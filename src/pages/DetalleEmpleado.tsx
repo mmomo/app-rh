@@ -1,0 +1,60 @@
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { store, useEstado } from '../data/store'
+import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
+import { nombreCompleto } from '../domain/empleado'
+import { formatearFecha } from '../domain/fechas'
+import { formatearMoneda } from '../domain/formato'
+import { NoEncontrado } from './NoEncontrado'
+
+export function DetalleEmpleado() {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const { empleados } = useEstado()
+  const empleado = empleados.find((e) => e.id === id)
+
+  if (!empleado) return <NoEncontrado />
+  const nombre = nombreCompleto(empleado)
+
+  function eliminar() {
+    if (window.confirm(`¿Eliminar a ${nombre}? Se borrará también su historial.`)) {
+      store.eliminarEmpleado(empleado!.id)
+      navigate('/empleados')
+    }
+  }
+
+  return (
+    <section>
+      <p>
+        <Link to="/empleados">← Volver a la lista</Link>
+      </p>
+      <div className="encabezado">
+        <h1>{nombre}</h1>
+        <div className="acciones">
+          <Link className="boton" to={`/empleados/${empleado.id}/editar`}>
+            Editar
+          </Link>
+          <button type="button" className="boton boton--peligro" onClick={eliminar}>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <dl className="ficha">
+        <dt>Puesto</dt>
+        <dd>{empleado.puesto}</dd>
+        <dt>Departamento</dt>
+        <dd>{empleado.departamento}</dd>
+        <dt>Fecha de ingreso</dt>
+        <dd>{formatearFecha(empleado.fechaIngreso)}</dd>
+        <dt>Antigüedad</dt>
+        <dd>{formatearAntiguedad(calcularAntiguedad(empleado.fechaIngreso))}</dd>
+        <dt>Salario inicial</dt>
+        <dd>{formatearMoneda(empleado.salarioInicial)}</dd>
+        <dt>Correo electrónico</dt>
+        <dd>{empleado.email ?? '—'}</dd>
+        <dt>Teléfono</dt>
+        <dd>{empleado.telefono ?? '—'}</dd>
+      </dl>
+    </section>
+  )
+}
