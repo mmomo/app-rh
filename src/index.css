@@ -76,3 +76,13 @@ th { font-size: 0.9rem; color: var(--muted); }
   .ficha { grid-template-columns: 1fr; gap: 2px; }
   .ficha dd { margin-bottom: 8px; }
 }
+
+.seccion { margin-top: 24px; }
+.destacado { font-weight: 700; }
+.formulario--linea { max-width: none; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: start; }
+.formulario--linea .acciones-formulario { align-self: start; padding-top: 28px; }
+.aviso { color: var(--success); font-weight: 600; min-height: 1.5em; margin: 8px 0; }
+.etiqueta {
+  display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 999px;
+  background: #e3ecfa; color: var(--primary); font-size: 0.8rem; font-weight: 700;
+}

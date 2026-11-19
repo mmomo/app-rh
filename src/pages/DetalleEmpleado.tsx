@@ -1,15 +1,17 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
+import { SeccionAumentos } from '../components/SeccionAumentos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { nombreCompleto } from '../domain/empleado'
 import { formatearFecha } from '../domain/fechas'
 import { formatearMoneda } from '../domain/formato'
+import { salarioVigente } from '../domain/salario'
 import { NoEncontrado } from './NoEncontrado'
 
 export function DetalleEmpleado() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { empleados } = useEstado()
+  const { empleados, aumentos } = useEstado()
   const empleado = empleados.find((e) => e.id === id)
 
   if (!empleado) return <NoEncontrado />
@@ -48,13 +50,15 @@ export function DetalleEmpleado() {
         <dd>{formatearFecha(empleado.fechaIngreso)}</dd>
         <dt>Antigüedad</dt>
         <dd>{formatearAntiguedad(calcularAntiguedad(empleado.fechaIngreso))}</dd>
-        <dt>Salario inicial</dt>
-        <dd>{formatearMoneda(empleado.salarioInicial)}</dd>
+        <dt>Salario vigente</dt>
+        <dd className="destacado">{formatearMoneda(salarioVigente(empleado, aumentos))}</dd>
         <dt>Correo electrónico</dt>
         <dd>{empleado.email ?? '—'}</dd>
         <dt>Teléfono</dt>
         <dd>{empleado.telefono ?? '—'}</dd>
       </dl>
+
+      <SeccionAumentos empleado={empleado} aumentos={aumentos} />
     </section>
   )
 }

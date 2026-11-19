@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { nombreCompleto } from '../domain/empleado'
+import { formatearMoneda } from '../domain/formato'
+import { salarioVigente } from '../domain/salario'
 
 export function ListaEmpleados() {
-  const { empleados } = useEstado()
+  const { empleados, aumentos } = useEstado()
   const [busqueda, setBusqueda] = useState('')
 
   const termino = busqueda.trim().toLowerCase()
@@ -47,6 +49,7 @@ export function ListaEmpleados() {
                 <th scope="col">Puesto</th>
                 <th scope="col">Departamento</th>
                 <th scope="col">Antigüedad</th>
+                <th scope="col">Salario vigente</th>
                 <th scope="col">
                   <span className="sr-only">Acciones</span>
                 </th>
@@ -63,6 +66,7 @@ export function ListaEmpleados() {
                     <td>{e.puesto}</td>
                     <td>{e.departamento}</td>
                     <td>{formatearAntiguedad(calcularAntiguedad(e.fechaIngreso))}</td>
+                    <td>{formatearMoneda(salarioVigente(e, aumentos))}</td>
                     <td className="acciones">
                       <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
                         Editar

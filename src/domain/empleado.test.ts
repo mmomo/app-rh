@@ -33,6 +33,11 @@ describe('validarEmpleado (R1)', () => {
     expect(validarEmpleado({ ...formValido, nombre: '   ' }).nombre).toBe(MENSAJE_OBLIGATORIO)
   })
 
+  it('R2b: rechaza salario inicial de $0 o negativo', () => {
+    expect(validarEmpleado({ ...formValido, salarioInicial: '0' }).salarioInicial).toBe('El salario debe ser mayor a $0.')
+    expect(validarEmpleado({ ...formValido, salarioInicial: '-5' }).salarioInicial).toBe('El salario debe ser mayor a $0.')
+  })
+
   it('rechaza fechas inexistentes', () => {
     expect(validarEmpleado({ ...formValido, fechaIngreso: '2023-02-30' }).fechaIngreso).toBeDefined()
   })

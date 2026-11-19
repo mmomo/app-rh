@@ -50,7 +50,7 @@ export function formDesdeEmpleado(e: Empleado): FormEmpleado {
   }
 }
 
-/** R1: los campos obligatorios no pueden quedar vacíos. */
+/** R1: los campos obligatorios no pueden quedar vacíos. R2b: el salario inicial debe ser mayor a 0. */
 export function validarEmpleado(form: FormEmpleado): Errores<CampoEmpleado> {
   const errores: Errores<CampoEmpleado> = {}
   for (const campo of OBLIGATORIOS) {
@@ -59,8 +59,10 @@ export function validarEmpleado(form: FormEmpleado): Errores<CampoEmpleado> {
   if (!errores.fechaIngreso && !esFechaISOValida(form.fechaIngreso)) {
     errores.fechaIngreso = 'Ingresa una fecha válida.'
   }
-  if (!errores.salarioInicial && !Number.isFinite(Number(form.salarioInicial))) {
-    errores.salarioInicial = 'Ingresa un monto numérico.'
+  if (!errores.salarioInicial) {
+    const salario = Number(form.salarioInicial)
+    if (!Number.isFinite(salario)) errores.salarioInicial = 'Ingresa un monto numérico.'
+    else if (salario <= 0) errores.salarioInicial = 'El salario debe ser mayor a $0.'
   }
   return errores
 }

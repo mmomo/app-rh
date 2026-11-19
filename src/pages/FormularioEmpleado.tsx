@@ -15,14 +15,23 @@ import { NoEncontrado } from './NoEncontrado'
 
 export function FormularioEmpleado() {
   const { id } = useParams()
-  const { empleados } = useEstado()
+  const { empleados, aumentos } = useEstado()
   const existente = id ? empleados.find((e) => e.id === id) : undefined
 
   if (id && !existente) return <NoEncontrado />
-  return <Formulario key={id ?? 'nuevo'} id={id} inicial={existente ? formDesdeEmpleado(existente) : formVacio} />
+  return (
+    <Formulario
+      key={id ?? 'nuevo'}
+      id={id}
+      inicial={existente ? formDesdeEmpleado(existente) : formVacio}
+      salarioBloqueado={aumentos.some((a) => a.empleadoId === id)}
+    />
+  )
 }
 
-function Formulario({ id, inicial }: { id?: string; inicial: FormEmpleado }) {
+type PropsFormulario = { id?: string; inicial: FormEmpleado; salarioBloqueado: boolean }
+
+function Formulario({ id, inicial, salarioBloqueado }: PropsFormulario) {
   const navigate = useNavigate()
   const [form, setForm] = useState(inicial)
   const [errores, setErrores] = useState<Errores<CampoEmpleado>>({})
@@ -71,6 +80,8 @@ function Formulario({ id, inicial }: { id?: string; inicial: FormEmpleado }) {
           inputMode="decimal"
           step="0.01"
           min="0"
+          readOnly={salarioBloqueado}
+          ayuda={salarioBloqueado ? 'Ya tiene aumentos registrados; el salario cambia mediante un nuevo aumento.' : undefined}
         />
         <Campo {...props('email')} etiqueta="Correo electrónico" type="email" autoComplete="email" />
         <Campo {...props('telefono')} etiqueta="Teléfono" type="tel" autoComplete="tel" />
