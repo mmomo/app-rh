@@ -61,7 +61,7 @@ type Aumento = {
   id: string;
   empleadoId: string;
   fecha: string;
-  salarioNuevo: number;    // > salario vigente (R2b, a confirmar)
+  salarioNuevo: number;    // > salario vigente (R2b)
   motivo?: string;
 };
 ```
@@ -74,7 +74,7 @@ type Aumento = {
 - SPA React + Vite + TS con React Router (rutas: `/empleados`, `/empleados/nuevo`, `/empleados/:id`, `/empleados/:id/editar`).
 - Lógica de dominio (validaciones, salario vigente, antigüedad) en funciones puras en `src/domain/`, con pruebas unitarias (Vitest).
 - Capa de repositorio (`src/data/`) detrás de una interfaz, para poder cambiar la persistencia sin tocar la UI.
-- Persistencia: **pendiente de decisión** (ver §7).
+- Persistencia: **`localStorage`** (despliegue estático en Vercel). Los datos viven en el navegador de cada usuario.
 
 ## 6. Plan de Construction (un commit por requerimiento)
 1. Scaffolding Vite + React + TS, Vitest, ESLint, estructura de carpetas.
@@ -87,9 +87,16 @@ type Aumento = {
 
 **Operations:** configuración y despliegue en Vercel, verificación de criterios de aceptación en producción, README.
 
-## 7. Preguntas abiertas (bloquean la aprobación)
-1. **Persistencia:** ¿`localStorage` (solo frontend) o backend con base de datos?
-2. **A5 "Interfaz clara":** ¿qué criterio medible se usará?
-3. **R2b "Salario válido":** ¿qué regla exacta?
-4. **R2c:** ¿qué otra consistencia se requiere?
-5. **Campos obligatorios** del empleado: ¿es correcta la lista de §4?
+## 7. Decisiones tomadas (2026-11-19)
+| Tema | Decisión |
+|---|---|
+| Persistencia | `localStorage`, sin backend. |
+| A5 Interfaz clara | Lighthouse Accesibilidad ≥ 90 en lista, formulario y detalle; todos los campos con etiqueta. |
+| R2b Salario válido | Salario inicial > 0; un aumento debe ser mayor que el salario vigente. |
+| R2c Consistencia | Fecha de ingreso no futura; permisos y aumentos no pueden ser anteriores a la fecha de ingreso. |
+
+Los cambios se reflejan en `docs/requerimientos.md` v1.1.
+
+## 8. Pendiente de confirmar
+- Lista de campos obligatorios del empleado (§4): nombre, apellidos, puesto, departamento, fecha de ingreso y salario inicial; email y teléfono opcionales.
+- Aprobación del plan de Construction (§6).
