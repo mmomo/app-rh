@@ -45,14 +45,29 @@ Mostrar los días de vacaciones disponibles que corresponden a cada empleado, cu
 | HU11 | Como encargado de RR. HH., quiero registrar las vacaciones que toma un empleado. | A6 |
 | HU12 | Quiero ver cuántos días de vacaciones le corresponden, cuántos ha usado y cuántos le quedan. | A6 |
 
-## 5. Preguntas abiertas (bloquean la aprobación)
-1. **Registro:** ¿las vacaciones se registran como un nuevo tipo de permiso o en una sección aparte?
-2. **Conteo de días usados:** ¿días laborables lunes a viernes, lunes a sábado o días naturales?
-3. **Días no usados:** ¿se acumulan de un periodo al siguiente o solo cuenta el periodo vigente?
-4. **Exceder el saldo:** ¿se bloquea registrar más días de los que le quedan?
+## 5. Decisiones (2026-11-20)
+| Tema | Decisión |
+|---|---|
+| Registro | Nuevo tipo de permiso **"Vacaciones"**, junto a con y sin goce de sueldo. Siguen aplicando R2a (fin ≥ inicio) y R2c (no antes del ingreso). |
+| Conteo | **Días laborables de lunes a viernes**; no se descuentan festivos. |
+| Acumulación | **Solo el periodo vigente**; los días no usados de periodos anteriores no se arrastran. |
+| Exceder el saldo | **Se bloquea** (nueva restricción R6). |
 
-## 6. Plan de Construction (borrador, se ajusta según las respuestas)
-1. Dominio: días por antigüedad (art. 76), periodo vigente, conteo de días usados, saldo. Con pruebas, incluida la tabla completa.
-2. Registro de vacaciones (según la pregunta 1) y validación del saldo (según la pregunta 4).
-3. Interfaz: sección de vacaciones en el detalle y columna en la lista.
-4. Verificación: pruebas, axe y Lighthouse (A5 ≥ 90), despliegue automático y verificación en producción.
+### Detalles propuestos (incluidos en el plan a aprobar)
+- **Periodo de cada registro:** unas vacaciones cuentan completas en el periodo en que **inician**. R6 valida contra el saldo de ese periodo, así que también se pueden registrar vacaciones de un periodo pasado o futuro con el saldo que corresponde a ese periodo.
+- **Rango sin días laborables** (p. ej. sábado a domingo): se rechaza.
+- **Historial de permisos:** para las vacaciones, la columna "Días" muestra los días laborables descontados (p. ej. "5 laborables"). Para los demás permisos sigue mostrando días naturales.
+
+Los cambios se reflejan en `docs/requerimientos.md` v1.3 (A6 y R6).
+
+## 6. Plan de Construction (un commit por requerimiento)
+1. **A6, dominio:** días por antigüedad (art. 76, con pruebas de toda la tabla), periodo vacacional, conteo de días laborables y saldo.
+2. **A6, registro:** tipo de permiso "Vacaciones" con conteo de días laborables en el historial.
+3. **R6:** validación del saldo al registrar vacaciones.
+4. **A6, interfaz:**
+   - **Detalle:** sección "Vacaciones" con las cifras corresponden / usados / restantes, el periodo y el aviso para empleados con menos de un año.
+   - **Lista:** columna "Vacaciones restantes".
+5. **Verificación:** pruebas, axe y Lighthouse (A5 ≥ 90), despliegue automático y verificación en producción.
+
+## 7. Pendiente de aprobación
+- Plan de Construction (§6) y detalles propuestos (§5).
