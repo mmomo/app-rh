@@ -79,8 +79,17 @@ th { font-size: 0.9rem; color: var(--muted); }
 
 .seccion { margin-top: 24px; }
 .destacado { font-weight: 700; }
-.formulario--linea { max-width: none; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); align-items: start; }
-.formulario--linea .acciones-formulario { align-self: start; padding-top: 28px; }
+/* Formulario en línea: cada campo ocupa 4 filas compartidas (etiqueta, control, ayuda, error) mediante subgrid,
+   así los controles quedan alineados aunque alguna etiqueta ocupe dos líneas. */
+.formulario--linea {
+  max-width: none; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: start; row-gap: 0;
+}
+.formulario--linea > * { grid-row: span 4; margin-bottom: 14px; }
+.formulario--linea > .campo:not(fieldset),
+.formulario--linea > .acciones-formulario { display: grid; grid-template-rows: subgrid; row-gap: 4px; align-content: start; }
+.formulario--linea > .campo:not(fieldset) > label { align-self: end; }
+.formulario--linea > .acciones-formulario > button { grid-row: 2; align-self: start; justify-self: start; }
 .aviso { color: var(--success); font-weight: 600; min-height: 1.5em; margin: 8px 0; }
 .etiqueta {
   display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 999px;
