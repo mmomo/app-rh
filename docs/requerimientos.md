@@ -15,7 +15,7 @@ App para administrar la información del personal de una organización, que faci
 | A4 | Antigüedad | Calcular y mostrar la antigüedad desde la fecha de ingreso. | Ingreso 15/03/2020, hoy 19/11/2026 → "6 años 8 meses". | Instrucciones del reto |
 | A5 | Interfaz clara | La interfaz es accesible: todos los campos tienen etiqueta visible y asociada, y la app obtiene puntaje de Accesibilidad en Lighthouse ≥ 90. | Auditoría Lighthouse de la lista, el formulario y el detalle de empleado → Accesibilidad ≥ 90 en cada una. | Instrucciones del reto |
 
-| A6 | Vacaciones | Mostrar los días de vacaciones que corresponden a cada empleado según la LFT art. 76, cuántos ha usado y cuántos le quedan en el periodo vacacional vigente (del último aniversario de ingreso al siguiente; sin acumular periodos anteriores). Las vacaciones se registran como un tipo de permiso y se cuentan en días laborables de lunes a viernes. | Ingreso 15/03/2020, hoy 20/11/2026 → corresponden 22; vacaciones del lunes 01/12/2026 al domingo 07/12/2026 → usados 5, restantes 17. | Cliente (iteración 3) |
+| A6 | Vacaciones | Mostrar los días de vacaciones que corresponden a cada empleado según la LFT art. 76, cuántos ha usado y cuántos le quedan en el periodo vacacional vigente (del último aniversario de ingreso al siguiente; sin acumular periodos anteriores). Las vacaciones se registran como un tipo de permiso y se cuentan en días laborables de lunes a viernes. | Ingreso 15/03/2020, hoy 20/11/2026 → corresponden 22; vacaciones del lunes 30/11/2026 al domingo 06/12/2026 → usados 5, restantes 17. | Cliente (iteración 3) |
 
 ## 3. Restricciones
 | ID | Restricción | Regla (Dado / Cuando / Entonces) | Caso de prueba | Origen |
