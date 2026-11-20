@@ -1,6 +1,7 @@
 import { MENSAJE_OBLIGATORIO } from './empleado'
 import { esFechaISOValida, formatearFecha } from './fechas'
-import type { Errores, Permiso, TipoPermiso } from './tipos'
+import type { Empleado, Errores, Permiso, TipoPermiso } from './tipos'
+import { aniversario, diasLaborables, saldoVacaciones } from './vacaciones'
 
 export const ETIQUETA_TIPO_PERMISO: Record<TipoPermiso, string> = {
   CON_GOCE: 'Con goce de sueldo',
@@ -27,8 +28,17 @@ export function diasPermiso({ fechaInicio, fechaFin }: Pick<Permiso, 'fechaInici
   return Math.round((utc(fechaFin) - utc(fechaInicio)) / 86_400_000) + 1
 }
 
-/** R2a: la fecha de fin no puede ser anterior a la de inicio. R2c: el permiso no puede iniciar antes del ingreso. */
-export function validarPermiso(form: FormPermiso, fechaIngreso: string): Errores<CampoPermiso> {
+/**
+ * R2a: la fecha de fin no puede ser anterior a la de inicio.
+ * R2c: el permiso no puede iniciar antes del ingreso.
+ * R6: las vacaciones no pueden exceder el saldo del periodo vacacional en que inician.
+ */
+export function validarPermiso(
+  form: FormPermiso,
+  empleado: Pick<Empleado, 'id' | 'fechaIngreso'>,
+  permisos: Permiso[] = [],
+): Errores<CampoPermiso> {
+  const { fechaIngreso } = empleado
   const errores: Errores<CampoPermiso> = {}
   if (form.tipo === '') errores.tipo = 'Selecciona el tipo de permiso.'
 
@@ -42,6 +52,17 @@ export function validarPermiso(form: FormPermiso, fechaIngreso: string): Errores
   }
   if (!errores.fechaInicio && !errores.fechaFin && form.fechaFin < form.fechaInicio) {
     errores.fechaFin = 'La fecha de fin no puede ser anterior a la de inicio.'
+  }
+  if (form.tipo === 'VACACIONES' && !errores.fechaInicio && !errores.fechaFin) {
+    const laborables = diasLaborables(form.fechaInicio, form.fechaFin)
+    const saldo = saldoVacaciones(empleado, permisos, form.fechaInicio)
+    if (saldo.corresponden === 0) {
+      errores.fechaInicio = `Aún no tiene derecho a vacaciones en esa fecha: cumple su primer año de servicio el ${formatearFecha(aniversario(fechaIngreso, 1))}.`
+    } else if (laborables === 0) {
+      errores.fechaFin = 'El periodo no incluye días laborables (lunes a viernes).'
+    } else if (laborables > saldo.restantes) {
+      errores.fechaFin = `Son ${laborables} días laborables y le quedan ${saldo.restantes} en el periodo vacacional ${formatearFecha(saldo.inicio)}–${formatearFecha(saldo.fin)}.`
+    }
   }
   return errores
 }

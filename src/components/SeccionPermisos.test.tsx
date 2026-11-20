@@ -90,3 +90,20 @@ describe('vacaciones como tipo de permiso (A6)', () => {
     expect(store.getEstado().permisos[0].tipo).toBe('VACACIONES')
   })
 })
+
+describe('saldo de vacaciones (R6)', () => {
+  it('caso de prueba: le quedan 17 días; 4 semanas (20 laborables) → bloqueado y se marca el campo', async () => {
+    const ana = altaAna()
+    store.crearPermiso({ empleadoId: ana.id, tipo: 'VACACIONES', fechaInicio: '2026-11-30', fechaFin: '2026-12-06' })
+    const { user } = renderApp(`/empleados/${ana.id}`)
+    await user.click(screen.getByRole('radio', { name: 'Vacaciones' }))
+    await user.type(screen.getByLabelText(/^Fecha de inicio/), '2027-01-04')
+    await user.type(screen.getByLabelText(/^Fecha de fin/), '2027-01-31')
+    await user.click(screen.getByRole('button', { name: 'Registrar permiso' }))
+
+    const fin = screen.getByLabelText(/^Fecha de fin/)
+    expect(fin).toHaveAttribute('aria-invalid', 'true')
+    expect(fin).toHaveAccessibleDescription('Son 20 días laborables y le quedan 17 en el periodo vacacional 15/03/2026–14/03/2027.')
+    expect(store.getEstado().permisos).toHaveLength(1)
+  })
+})

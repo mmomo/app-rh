@@ -43,7 +43,7 @@ export function SeccionPermisos({ empleado, permisos }: Props) {
 
   function registrar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const nuevosErrores = validarPermiso(form, empleado.fechaIngreso)
+    const nuevosErrores = validarPermiso(form, empleado, permisos)
     setErrores(nuevosErrores)
     const primero = Object.keys(nuevosErrores)[0]
     if (primero || form.tipo === '') {
