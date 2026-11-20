@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { SeccionAumentos } from '../components/SeccionAumentos'
 import { SeccionPermisos } from '../components/SeccionPermisos'
 import { SeccionVacaciones } from '../components/SeccionVacaciones'
+import { esEjemplo } from '../data/ejemplos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { calcularEdad, datosIncompletos, nombreCompleto } from '../domain/empleado'
@@ -32,14 +33,19 @@ export function DetalleEmpleado() {
         <Link to="/empleados">← Volver a la lista</Link>
       </p>
       <div className="encabezado">
-        <h1>{nombre}</h1>
+        <h1>
+          {nombre}
+          {esEjemplo(empleado.id) && <span className="etiqueta">Ejemplo</span>}
+        </h1>
         <div className="acciones">
           <Link className="boton" to={`/empleados/${empleado.id}/editar`}>
             Editar
           </Link>
-          <button type="button" className="boton boton--peligro" onClick={eliminar}>
-            Eliminar
-          </button>
+          {!esEjemplo(empleado.id) && (
+            <button type="button" className="boton boton--peligro" onClick={eliminar}>
+              Eliminar
+            </button>
+          )}
         </div>
       </div>
 

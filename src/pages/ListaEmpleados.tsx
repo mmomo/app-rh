@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { esEjemplo } from '../data/ejemplos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { datosIncompletos, nombreCompleto } from '../domain/empleado'
@@ -70,6 +71,7 @@ export function ListaEmpleados() {
                   <tr key={e.id}>
                     <td>
                       <Link to={`/empleados/${e.id}`}>{nombre}</Link>
+                      {esEjemplo(e.id) && <span className="etiqueta">Ejemplo</span>}
                       {datosIncompletos(e) && <span className="etiqueta etiqueta--aviso">Datos incompletos</span>}
                     </td>
                     <td>{e.puesto}</td>
@@ -81,14 +83,16 @@ export function ListaEmpleados() {
                       <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
                         Editar
                       </Link>
-                      <button
-                        type="button"
-                        className="boton boton--peligro"
-                        onClick={() => eliminar(e.id, nombre)}
-                        aria-label={`Eliminar a ${nombre}`}
-                      >
-                        Eliminar
-                      </button>
+                      {!esEjemplo(e.id) && (
+                        <button
+                          type="button"
+                          className="boton boton--peligro"
+                          onClick={() => eliminar(e.id, nombre)}
+                          aria-label={`Eliminar a ${nombre}`}
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </td>
                   </tr>
                 )

@@ -1,13 +1,24 @@
 import { useSyncExternalStore } from 'react'
 import type { Aumento, DatosEmpleado, Empleado, Permiso } from '../domain/tipos'
 import { almacenamientoLocal, type Almacenamiento, type Estado } from './almacenamiento'
+import { agregarEjemplos, esEjemplo } from './ejemplos'
 
 function nuevoId(): string {
   return globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
-export function crearStore(almacenamiento: Almacenamiento) {
-  let estado = almacenamiento.cargar()
+type Opciones = { conEjemplos?: boolean }
+
+export function crearStore(almacenamiento: Almacenamiento, { conEjemplos = false }: Opciones = {}) {
+  function cargar(): Estado {
+    const guardado = almacenamiento.cargar()
+    if (!conEjemplos) return guardado
+    const completo = agregarEjemplos(guardado)
+    if (completo !== guardado) almacenamiento.guardar(completo)
+    return completo
+  }
+
+  let estado = cargar()
   const suscriptores = new Set<() => void>()
 
   function actualizar(cambio: (e: Estado) => Estado) {
@@ -24,7 +35,7 @@ export function crearStore(almacenamiento: Almacenamiento) {
     },
     /** Vuelve a leer el almacenamiento (útil en pruebas). */
     recargar() {
-      estado = almacenamiento.cargar()
+      estado = cargar()
       suscriptores.forEach((s) => s())
     },
 
@@ -49,8 +60,9 @@ export function crearStore(almacenamiento: Almacenamiento) {
       actualizar((e) => ({ ...e, permisos: [...e.permisos, permiso] }))
       return permiso
     },
-    /** Elimina al empleado junto con su historial de permisos y aumentos. */
+    /** Elimina al empleado junto con su historial de permisos y aumentos. Los empleados de ejemplo no se eliminan. */
     eliminarEmpleado(id: string) {
+      if (esEjemplo(id)) return
       actualizar((e) => ({
         empleados: e.empleados.filter((emp) => emp.id !== id),
         permisos: e.permisos.filter((p) => p.empleadoId !== id),
@@ -62,7 +74,8 @@ export function crearStore(almacenamiento: Almacenamiento) {
 
 export type Store = ReturnType<typeof crearStore>
 
-export const store = crearStore(almacenamientoLocal)
+// En pruebas se arranca sin ejemplos para que cada caso controle sus datos.
+export const store = crearStore(almacenamientoLocal, { conEjemplos: import.meta.env.MODE !== 'test' })
 
 export function useEstado(): Estado {
   return useSyncExternalStore(store.suscribir, store.getEstado)

@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { renderApp } from '../test/utils'
+import { EJEMPLOS } from '../data/ejemplos'
 import { store } from '../data/store'
 
 describe('CRUD de empleados (A1)', () => {
@@ -149,5 +150,20 @@ describe('empleados registrados antes de v1.2', () => {
     await user.click(screen.getByRole('button', { name: 'Guardar' }))
     expect(screen.getByRole('heading', { name: 'Luis Pérez' })).toBeInTheDocument()
     expect(screen.queryByText(/Datos incompletos/)).not.toBeInTheDocument()
+  })
+})
+
+describe('empleados de ejemplo (A7)', () => {
+  it('se muestran con la etiqueta "Ejemplo", se pueden editar y no tienen botón de eliminar', async () => {
+    localStorage.setItem('app-rh:datos:v1', JSON.stringify(EJEMPLOS))
+    store.recargar()
+    const { user } = renderApp()
+    expect(screen.getAllByText('Ejemplo')).toHaveLength(2)
+    expect(screen.getByRole('link', { name: 'Editar a María Fernanda González Ruiz' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^Eliminar a/ })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'María Fernanda González Ruiz' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('María Fernanda González RuizEjemplo')
+    expect(screen.queryByRole('button', { name: 'Eliminar' })).not.toBeInTheDocument()
   })
 })
