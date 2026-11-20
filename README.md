@@ -1,5 +1,7 @@
 # Control de RR. HH.
 
+**Producción:** https://app-rh-iota.vercel.app
+
 Aplicación web para administrar la información del personal: empleados, permisos con y sin goce de sueldo, aumentos salariales (con salario vigente automático) y antigüedad.
 
 **Stack:** React 19 + Vite 6 + TypeScript, React Router, Vitest + Testing Library + axe-core. Despliegue en Vercel.

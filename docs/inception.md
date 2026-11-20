@@ -85,7 +85,7 @@ type Aumento = {
 6. R2c — consistencia adicional.
 7. A5 — ajustes de interfaz según criterio medible.
 
-**Operations:** configuración y despliegue en Vercel, verificación de criterios de aceptación en producción, README.
+**Operations:** configuración y despliegue en Vercel, verificación de criterios de aceptación en producción, README. — ✅ completado 2026-11-19: https://app-rh-iota.vercel.app (ver `docs/evidencias/operations-produccion.md`).
 
 ## 7. Decisiones tomadas (2026-11-19)
 | Tema | Decisión |
