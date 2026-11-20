@@ -1,6 +1,6 @@
 # Inception — Iteración 3: vacaciones
 
-> Estado: **BORRADOR — pendiente de aprobación**
+> Estado: **APROBADO** (2026-11-20)
 > Fecha: 2026-11-20
 > Fuente: `docs/requerimientos.md` v1.3 (A6)
 
@@ -69,5 +69,5 @@ Los cambios se reflejan en `docs/requerimientos.md` v1.3 (A6 y R6).
    - **Lista:** columna "Vacaciones restantes".
 5. **Verificación:** pruebas, axe y Lighthouse (A5 ≥ 90), despliegue automático y verificación en producción.
 
-## 7. Pendiente de aprobación
-- Plan de Construction (§6) y detalles propuestos (§5).
+## 7. Aprobación
+- Plan de Construction (§6) y detalles propuestos (§5) aprobados el 2026-11-20.
