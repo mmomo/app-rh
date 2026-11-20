@@ -45,6 +45,16 @@ describe('accesibilidad (A5)', () => {
     expect(await violaciones()).toEqual([])
   })
 
+  it('detalle con avisos de datos incompletos y de más de 100 años (R7)', async () => {
+    const luis = store.crearEmpleado({
+      nombre: 'Luis', apellidos: 'Pérez', puesto: 'Dev', departamento: 'TI',
+      fechaIngreso: '1925-01-01', salarioInicial: 12000,
+    })
+    renderApp(`/empleados/${luis.id}`)
+    expect(screen.getByText(/Supera 100 años/)).toBeInTheDocument()
+    expect(await violaciones()).toEqual([])
+  })
+
   it('todos los campos tienen una etiqueta visible asociada', () => {
     const ana = altaConHistorial()
     for (const ruta of ['/empleados', '/empleados/nuevo', `/empleados/${ana.id}`]) {

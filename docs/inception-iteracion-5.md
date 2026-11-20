@@ -1,6 +1,6 @@
 # Inception — Iteración 5: límite de 100 años
 
-> Estado: **BORRADOR — pendiente de aprobación**
+> Estado: **APROBADO** (2026-11-20)
 > Fecha: 2026-11-20
 > Fuente: `docs/requerimientos.md` v1.5 (R7)
 
@@ -42,11 +42,11 @@ Empleados no pueden tener más de 100 años de edad ni de contratación. Esto si
 - 100 años cumplidos se aceptan; el rechazo empieza en 101.
 - La antigüedad se valida también por separado de la edad.
 
-## 6. Plan de Construction (un commit por requerimiento)
+## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-20
 1. **R7 — validación:** `EDAD_MAXIMA = 100` y `ANTIGUEDAD_MAXIMA = 100` en el dominio; `validarEmpleado` rechaza edad o antigüedad mayores; función `excedeLimiteAnios(empleado, hoy)` para los avisos. Pruebas de los casos límite (100 aceptado, 101 rechazado) y de que los ejemplos cumplen R7.
 2. **R7 — aviso:** etiqueta en la lista y alerta en el detalle, con pruebas de interfaz y de accesibilidad.
 
 **Operations:** push a `main` (CI y despliegue automático en Vercel), verificación en producción y Lighthouse Accesibilidad ≥ 90.
 
 ## 7. Aprobación
-Pendiente.
+Plan aprobado el 2026-11-20 ("Continua").

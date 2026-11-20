@@ -38,6 +38,7 @@ docs/
   inception.md        Plan, modelo de datos y decisiones (AI-DLC: Inception)
   inception-iteracion-2.md  Inception de R3–R5
   inception-iteracion-3.md  Inception de A6 y R6 (vacaciones)
+  inception-iteracion-5.md  Inception de R7 (límite de 100 años)
   evidencias/         Evidencia de verificación de criterios
   prompts.md          Registro de prompts
 ```
@@ -57,7 +58,8 @@ docs/
 | R5 | `domain/empleado.ts` (validación de NSS) | `domain/empleado.test.ts`, `pages/empleados.test.tsx` |
 | A6 | `domain/vacaciones.ts`, `components/SeccionVacaciones.tsx`, columna en `pages/ListaEmpleados.tsx` | `domain/vacaciones.test.ts`, `components/SeccionVacaciones.test.tsx` |
 | R6 | `domain/permiso.ts` (`validarPermiso`) | `domain/permiso.test.ts`, `components/SeccionPermisos.test.tsx` |
-| A7 | `data/ejemplos.ts`, carga en `data/store.ts` | `data/ejemplos.test.ts` (incluye que los ejemplos cumplan R1–R6), `pages/empleados.test.tsx` |
+| A7 | `data/ejemplos.ts`, carga en `data/store.ts` | `data/ejemplos.test.ts` (incluye que los ejemplos cumplan R1–R7), `pages/empleados.test.tsx` |
+| R7 | `domain/empleado.ts` (`validarEmpleado`, `excesoDeAnios`); avisos en `pages/ListaEmpleados.tsx` y `pages/DetalleEmpleado.tsx` | `domain/empleado.test.ts`, `pages/empleados.test.tsx`, `test/accesibilidad.test.tsx` |
 
 ## Mantenimiento anual
 El salario mínimo cambia cada 1 de enero. Actualizar `SALARIO_MINIMO` en `src/domain/salarioMinimo.ts` con el monto diario publicado por CONASAMI en el DOF y ajustar la prueba de `salarioMinimo.test.ts`.

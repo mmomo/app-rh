@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { esEjemplo } from '../data/ejemplos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
-import { datosIncompletos, nombreCompleto } from '../domain/empleado'
+import { datosIncompletos, nombreCompleto, superaLimiteAnios } from '../domain/empleado'
 import { formatearMoneda } from '../domain/formato'
 import type { Empleado } from '../domain/tipos'
 import { salarioVigente } from '../domain/salario'
@@ -73,6 +73,7 @@ export function ListaEmpleados() {
                       <Link to={`/empleados/${e.id}`}>{nombre}</Link>
                       {esEjemplo(e.id) && <> <span className="etiqueta">Ejemplo</span></>}
                       {datosIncompletos(e) && <> <span className="etiqueta etiqueta--aviso">Datos incompletos</span></>}
+                      {superaLimiteAnios(e) && <> <span className="etiqueta etiqueta--aviso">Supera 100 años</span></>}
                     </td>
                     <td>{e.puesto}</td>
                     <td>{e.departamento}</td>

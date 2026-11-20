@@ -153,6 +153,35 @@ describe('empleados registrados antes de v1.2', () => {
   })
 })
 
+describe('empleados que rebasan 100 años (R7)', () => {
+  it('muestran "Supera 100 años" y al editarlos no se guardan hasta corregir la fecha', async () => {
+    store.crearEmpleado({
+      nombre: 'Luis', apellidos: 'Pérez', puesto: 'Dev', departamento: 'TI',
+      fechaNacimiento: '1900-01-01', nss: '98765432109', fechaIngreso: '1925-01-01', salarioInicial: 12000,
+    })
+    const { user } = renderApp()
+    expect(screen.getByText('Supera 100 años')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Luis Pérez' }))
+    expect(screen.getByText(/tiene \d+ años de edad y \d+ años de antigüedad; el máximo es 100/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Corregir datos' }))
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    expect(screen.getByLabelText(/^Fecha de nacimiento/)).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText(/^Fecha de ingreso/)).toHaveAttribute('aria-invalid', 'true')
+
+    const nacimiento = screen.getByLabelText(/^Fecha de nacimiento/)
+    await user.clear(nacimiento)
+    await user.type(nacimiento, '1990-05-20')
+    const ingreso = screen.getByLabelText(/^Fecha de ingreso/)
+    await user.clear(ingreso)
+    await user.type(ingreso, '2021-01-01')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    expect(screen.getByRole('heading', { name: 'Luis Pérez' })).toBeInTheDocument()
+    expect(screen.queryByText(/Supera 100 años/)).not.toBeInTheDocument()
+  })
+})
+
 describe('empleados de ejemplo (A7)', () => {
   it('se muestran con la etiqueta "Ejemplo", se pueden editar y no tienen botón de eliminar', async () => {
     localStorage.setItem('app-rh:datos:v1', JSON.stringify(EJEMPLOS))

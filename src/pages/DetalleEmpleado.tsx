@@ -5,7 +5,7 @@ import { SeccionVacaciones } from '../components/SeccionVacaciones'
 import { esEjemplo } from '../data/ejemplos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
-import { calcularEdad, datosIncompletos, nombreCompleto } from '../domain/empleado'
+import { calcularEdad, datosIncompletos, EDAD_MAXIMA, excesoDeAnios, nombreCompleto } from '../domain/empleado'
 import { formatearFecha } from '../domain/fechas'
 import { formatearMoneda } from '../domain/formato'
 import { salarioVigente } from '../domain/salario'
@@ -19,6 +19,11 @@ export function DetalleEmpleado() {
 
   if (!empleado) return <NoEncontrado />
   const nombre = nombreCompleto(empleado)
+  const exceso = excesoDeAnios(empleado)
+  const excesos = [
+    exceso.edad && `${exceso.edad} años de edad`,
+    exceso.antiguedad && `${exceso.antiguedad} años de antigüedad`,
+  ].filter(Boolean)
 
   function eliminar() {
     if (window.confirm(`¿Eliminar a ${nombre}? Se borrará también su historial.`)) {
@@ -53,6 +58,13 @@ export function DetalleEmpleado() {
         <p className="alerta">
           <strong>Datos incompletos:</strong> falta registrar el NSS o la fecha de nacimiento.{' '}
           <Link to={`/empleados/${empleado.id}/editar`}>Completar datos</Link>
+        </p>
+      )}
+
+      {excesos.length > 0 && (
+        <p className="alerta">
+          <strong>Supera {EDAD_MAXIMA} años:</strong> tiene {excesos.join(' y ')}; el máximo es {EDAD_MAXIMA}. Revisa las fechas.{' '}
+          <Link to={`/empleados/${empleado.id}/editar`}>Corregir datos</Link>
         </p>
       )}
 
