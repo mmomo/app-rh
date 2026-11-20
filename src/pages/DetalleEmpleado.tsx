@@ -35,7 +35,7 @@ export function DetalleEmpleado() {
       <div className="encabezado">
         <h1>
           {nombre}
-          {esEjemplo(empleado.id) && <span className="etiqueta">Ejemplo</span>}
+          {esEjemplo(empleado.id) && <> <span className="etiqueta">Ejemplo</span></>}
         </h1>
         <div className="acciones">
           <Link className="boton" to={`/empleados/${empleado.id}/editar`}>

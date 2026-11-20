@@ -163,7 +163,7 @@ describe('empleados de ejemplo (A7)', () => {
     expect(screen.queryByRole('button', { name: /^Eliminar a/ })).not.toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'María Fernanda González Ruiz' }))
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('María Fernanda González RuizEjemplo')
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('María Fernanda González Ruiz Ejemplo')
     expect(screen.queryByRole('button', { name: 'Eliminar' })).not.toBeInTheDocument()
   })
 })

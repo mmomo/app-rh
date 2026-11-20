@@ -71,28 +71,30 @@ export function ListaEmpleados() {
                   <tr key={e.id}>
                     <td>
                       <Link to={`/empleados/${e.id}`}>{nombre}</Link>
-                      {esEjemplo(e.id) && <span className="etiqueta">Ejemplo</span>}
-                      {datosIncompletos(e) && <span className="etiqueta etiqueta--aviso">Datos incompletos</span>}
+                      {esEjemplo(e.id) && <> <span className="etiqueta">Ejemplo</span></>}
+                      {datosIncompletos(e) && <> <span className="etiqueta etiqueta--aviso">Datos incompletos</span></>}
                     </td>
                     <td>{e.puesto}</td>
                     <td>{e.departamento}</td>
                     <td>{formatearAntiguedad(calcularAntiguedad(e.fechaIngreso))}</td>
                     <td>{formatearMoneda(salarioVigente(e, aumentos))}</td>
                     <td>{textoVacaciones(e)}</td>
-                    <td className="acciones">
-                      <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
-                        Editar
-                      </Link>
-                      {!esEjemplo(e.id) && (
-                        <button
-                          type="button"
-                          className="boton boton--peligro"
-                          onClick={() => eliminar(e.id, nombre)}
-                          aria-label={`Eliminar a ${nombre}`}
-                        >
-                          Eliminar
-                        </button>
-                      )}
+                    <td>
+                      <div className="acciones">
+                        <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
+                          Editar
+                        </Link>
+                        {!esEjemplo(e.id) && (
+                          <button
+                            type="button"
+                            className="boton boton--peligro"
+                            onClick={() => eliminar(e.id, nombre)}
+                            aria-label={`Eliminar a ${nombre}`}
+                          >
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
