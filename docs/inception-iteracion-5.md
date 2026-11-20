@@ -43,10 +43,13 @@ Empleados no pueden tener más de 100 años de edad ni de contratación. Esto si
 - La antigüedad se valida también por separado de la edad.
 
 ## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-20
-1. **R7 — validación:** `EDAD_MAXIMA = 100` y `ANTIGUEDAD_MAXIMA = 100` en el dominio; `validarEmpleado` rechaza edad o antigüedad mayores; función `excedeLimiteAnios(empleado, hoy)` para los avisos. Pruebas de los casos límite (100 aceptado, 101 rechazado) y de que los ejemplos cumplen R7.
+1. **R7 — validación:** `EDAD_MAXIMA = 100` y `ANTIGUEDAD_MAXIMA = 100` en el dominio; `validarEmpleado` rechaza edad o antigüedad mayores; función `excesoDeAnios(empleado, hoy)` para los avisos. Pruebas de los casos límite (100 aceptado, 101 rechazado) y de que los ejemplos cumplen R7.
 2. **R7 — aviso:** etiqueta en la lista y alerta en el detalle, con pruebas de interfaz y de accesibilidad.
 
 **Operations:** push a `main` (CI y despliegue automático en Vercel), verificación en producción y Lighthouse Accesibilidad ≥ 90.
 
 ## 7. Aprobación
 Plan aprobado el 2026-11-20 ("Continua").
+
+## 8. Operations
+✅ Desplegado y verificado en producción el 2026-11-20 (ver `docs/evidencias/iteracion-5-produccion.md`).
