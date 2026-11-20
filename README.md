@@ -1,5 +1,7 @@
 # Control de RR. HH.
 
+[![CI](https://github.com/mmomo/app-rh/actions/workflows/ci.yml/badge.svg)](https://github.com/mmomo/app-rh/actions/workflows/ci.yml)
+
 **Producción:** https://app-rh-iota.vercel.app
 
 Aplicación web para administrar la información del personal: empleados, permisos con y sin goce de sueldo, aumentos salariales (con salario vigente automático) y antigüedad.
@@ -46,6 +48,9 @@ docs/
 | A4 | `domain/antiguedad.ts` | `domain/antiguedad.test.ts` |
 | R2c | `domain/empleado.ts`, `domain/permiso.ts`, `domain/salario.ts` | pruebas de dominio y `SeccionPermisos.test.tsx` |
 | A5 | `components/Campo.tsx`, estilos en `index.css` | `test/accesibilidad.test.tsx`, `docs/evidencias/a5-accesibilidad.md` |
+
+## Integración continua
+`.github/workflows/ci.yml` corre en cada push y pull request a `main`: `npm ci`, lint, pruebas y build (Node 22).
 
 ## Despliegue
 Vercel detecta Vite automáticamente (`npm run build`, salida `dist/`). `vercel.json` redirige todas las rutas a `index.html` para que funcionen las rutas del cliente al recargar.
