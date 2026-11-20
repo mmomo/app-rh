@@ -1,6 +1,6 @@
 # Requerimientos: Sistema de Control de RR. HH.
 
-> Versión: 1.4
+> Versión: 1.5
 
 ## 1. Contexto
 App para administrar la información del personal de una organización, que facilite la gestión de empleados y diversos procesos relacionados con recursos humanos.
@@ -30,6 +30,7 @@ App para administrar la información del personal de una organización, que faci
 | R5 | NSS único | El NSS es obligatorio y tiene exactamente 11 dígitos. Dado el alta o edición de un empleado, cuando su NSS ya está asignado a otro empleado, entonces no se guarda y se marca el campo. | Ana con NSS 12345678901; alta de Luis con 12345678901 → bloqueado; NSS de 10 dígitos → bloqueado. | Cliente (iteración 2) |
 
 | R6 | Saldo de vacaciones | Dado el registro de vacaciones, cuando los días laborables (lunes a viernes) exceden el saldo del periodo vacacional en que inician, o el empleado aún no cumple un año de servicio, o el rango no incluye días laborables, entonces se rechaza y se marca el campo. | Le quedan 17 días; vacaciones de 4 semanas (20 días laborables) → bloqueado. Ingreso hace 6 meses → bloqueado. | Cliente (iteración 3) |
+| R7 | Límite de 100 años | Dado el alta o edición de un empleado, cuando su **edad a hoy** o su **antigüedad a hoy** es mayor a 100 años cumplidos, entonces no se guarda y se marca el campo. Los empleados guardados que rebasan el límite con el tiempo se muestran con un aviso. | Hoy 20/11/2026: nacimiento 21/11/1925 (100 años) → aceptado; 20/11/1925 (101 años) → bloqueado. Ingreso 20/11/1925 → bloqueado. | Cliente (iteración 5) |
 
 ## Historial de cambios
 | Versión | Fecha | Cambio |
@@ -39,3 +40,4 @@ App para administrar la información del personal de una organización, que faci
 | 1.2 | 2026-11-20 | Se agregan R3 (salario mínimo), R4 (edad mínima) y R5 (NSS único); reglas en Inception de la iteración 2. |
 | 1.3 | 2026-11-20 | Se agregan A6 (vacaciones disponibles, usadas y restantes) y R6 (saldo de vacaciones). |
 | 1.4 | 2026-11-20 | Se agrega A7 (empleados de ejemplo siempre presentes). |
+| 1.5 | 2026-11-20 | Se agrega R7 (edad y antigüedad máximas de 100 años). |
