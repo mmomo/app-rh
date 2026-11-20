@@ -108,3 +108,8 @@ td .etiqueta { margin-left: 0; }
 .cifra dd { margin: 0; font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
 .cifra--destacada { border-color: var(--primary); }
 .cifra--destacada dd { color: var(--primary); }
+@media (max-width: 480px) {
+  .cifras { grid-template-columns: 1fr; gap: 8px; }
+  .cifra { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 14px; }
+  .cifra dd { font-size: 1.5rem; }
+}
