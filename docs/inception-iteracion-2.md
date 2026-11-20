@@ -1,6 +1,6 @@
 # Inception — Iteración 2: salario mínimo, edad mínima y NSS
 
-> Estado: **BORRADOR — pendiente de aprobación**
+> Estado: **APROBADO** (2026-11-20)
 > Fecha: 2026-11-20
 > Fuente: `docs/requerimientos.md` v1.2 (R3, R4, R5)
 
@@ -66,5 +66,5 @@ Los cambios se reflejan en `docs/requerimientos.md` v1.2.
 4. Datos existentes: aviso "Datos incompletos" en la lista y el detalle, con pruebas.
 5. Verificación: pruebas automatizadas, accesibilidad con axe y Lighthouse (A5 ≥ 90), despliegue y verificación en producción.
 
-## 7. Pendiente de aprobación
-- Plan de Construction (§6).
+## 7. Aprobación
+- Plan de Construction (§6) aprobado el 2026-11-20.
