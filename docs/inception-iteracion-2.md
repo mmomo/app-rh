@@ -59,7 +59,7 @@ El monto cambia cada 1 de enero, así que debe quedar en un solo lugar del códi
 
 Los cambios se reflejan en `docs/requerimientos.md` v1.2.
 
-## 6. Plan de Construction (un commit por requerimiento)
+## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-20
 1. R3: constante del salario mínimo 2026 y validación en el alta, la edición y los aumentos, con pruebas.
 2. R4: campo `fechaNacimiento`, cálculo de edad y validación, con pruebas.
 3. R5: campo `nss`, validación de formato y unicidad, con pruebas.
@@ -68,3 +68,12 @@ Los cambios se reflejan en `docs/requerimientos.md` v1.2.
 
 ## 7. Aprobación
 - Plan de Construction (§6) aprobado el 2026-11-20.
+
+## 8. Decisiones tomadas durante Construction
+- **R3 en edición:** si un salario inicial guardado antes de la regla no cambia, no se vuelve a validar contra el mínimo vigente. Así se pueden completar los datos de empleados previos sin alterar su historial salarial.
+- **R3 en aumentos:** se valida primero que supere al vigente (R2b) y después el mínimo (R3).
+- **R4:** una fecha de nacimiento igual o posterior a la de ingreso se rechaza con su propio mensaje.
+- **R5:** el mensaje de NSS repetido indica a qué empleado está asignado, para facilitar la corrección.
+
+## 9. Operations
+Desplegado automáticamente desde GitHub en https://app-rh-iota.vercel.app. Evidencia en `docs/evidencias/iteracion-2-produccion.md`.

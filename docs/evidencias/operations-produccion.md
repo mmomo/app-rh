@@ -33,4 +33,4 @@ Recorrido automatizado en Chrome headless contra la URL pública, operando la in
 
 ## Notas de operación
 - Los datos viven en `localStorage` de cada navegador: no se comparten entre usuarios ni dispositivos.
-- Para redeplegar: `npx vercel --prod` desde la raíz del proyecto.
+- Desde 2026-11-20 el proyecto está conectado a GitHub (`mmomo/app-rh`): cada push a `main` despliega a producción automáticamente. `npx vercel --prod` sigue disponible para despliegues manuales.

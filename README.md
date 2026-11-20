@@ -4,7 +4,7 @@
 
 **Producción:** https://app-rh-iota.vercel.app
 
-Aplicación web para administrar la información del personal: empleados, permisos con y sin goce de sueldo, aumentos salariales (con salario vigente automático) y antigüedad.
+Aplicación web para administrar la información del personal: empleados (con NSS único y edad mínima de 18 años), permisos con y sin goce de sueldo, aumentos salariales mensuales (con salario vigente automático y respeto al salario mínimo) y antigüedad.
 
 **Stack:** React 19 + Vite 6 + TypeScript, React Router, Vitest + Testing Library + axe-core. Despliegue en Vercel.
 
@@ -34,6 +34,7 @@ src/
 docs/
   requerimientos.md   Requerimientos con criterios de aceptación (v1.1)
   inception.md        Plan, modelo de datos y decisiones (AI-DLC: Inception)
+  inception-iteracion-2.md  Inception de R3–R5
   evidencias/         Evidencia de verificación de criterios
   prompts.md          Registro de prompts
 ```
@@ -48,9 +49,15 @@ docs/
 | A4 | `domain/antiguedad.ts` | `domain/antiguedad.test.ts` |
 | R2c | `domain/empleado.ts`, `domain/permiso.ts`, `domain/salario.ts` | pruebas de dominio y `SeccionPermisos.test.tsx` |
 | A5 | `components/Campo.tsx`, estilos en `index.css` | `test/accesibilidad.test.tsx`, `docs/evidencias/a5-accesibilidad.md` |
+| R3 | `domain/salarioMinimo.ts`, `domain/empleado.ts`, `domain/salario.ts` | `domain/salarioMinimo.test.ts`, pruebas de dominio y `pages/empleados.test.tsx` |
+| R4 | `domain/empleado.ts` (`calcularEdad`, `EDAD_MINIMA`) | `domain/empleado.test.ts`, `pages/empleados.test.tsx` |
+| R5 | `domain/empleado.ts` (validación de NSS) | `domain/empleado.test.ts`, `pages/empleados.test.tsx` |
+
+## Mantenimiento anual
+El salario mínimo cambia cada 1 de enero. Actualizar `SALARIO_MINIMO` en `src/domain/salarioMinimo.ts` con el monto diario publicado por CONASAMI en el DOF y ajustar la prueba de `salarioMinimo.test.ts`.
 
 ## Integración continua
 `.github/workflows/ci.yml` corre en cada push y pull request a `main`: `npm ci`, lint, pruebas y build (Node 22).
 
 ## Despliegue
-Vercel detecta Vite automáticamente (`npm run build`, salida `dist/`). `vercel.json` redirige todas las rutas a `index.html` para que funcionen las rutas del cliente al recargar.
+El proyecto de Vercel está conectado al repositorio: cada push a `main` despliega a producción y cada pull request genera un despliegue de vista previa. Vercel detecta Vite automáticamente (`npm run build`, salida `dist/`). `vercel.json` redirige todas las rutas a `index.html` para que funcionen las rutas del cliente al recargar.
