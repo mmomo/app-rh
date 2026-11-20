@@ -1,6 +1,6 @@
 # Requerimientos: Sistema de Control de RR. HH.
 
-> Versión: 1.2
+> Versión: 1.3 (borrador: A6 en Inception)
 
 ## 1. Contexto
 App para administrar la información del personal de una organización, que facilite la gestión de empleados y diversos procesos relacionados con recursos humanos.
@@ -15,6 +15,7 @@ App para administrar la información del personal de una organización, que faci
 | A4 | Antigüedad | Calcular y mostrar la antigüedad desde la fecha de ingreso. | Ingreso 15/03/2020, hoy 19/11/2026 → "6 años 8 meses". | Instrucciones del reto |
 | A5 | Interfaz clara | La interfaz es accesible: todos los campos tienen etiqueta visible y asociada, y la app obtiene puntaje de Accesibilidad en Lighthouse ≥ 90. | Auditoría Lighthouse de la lista, el formulario y el detalle de empleado → Accesibilidad ≥ 90 en cada una. | Instrucciones del reto |
 
+| A6 | Vacaciones | Mostrar los días de vacaciones que corresponden a cada empleado según la LFT, cuántos ha usado y cuántos le quedan. | [Pendiente: depende de cómo se registran y cuentan los días usados] | Cliente (iteración 3) |
 
 ## 3. Restricciones
 | ID | Restricción | Regla (Dado / Cuando / Entonces) | Caso de prueba | Origen |
@@ -34,3 +35,4 @@ App para administrar la información del personal de una organización, que faci
 | 1.0 | 2026-11-19 | Versión inicial |
 | 1.1 | 2026-11-19 | Se definen A5, R2b y R2c (Inception). |
 | 1.2 | 2026-11-20 | Se agregan R3 (salario mínimo), R4 (edad mínima) y R5 (NSS único); reglas en Inception de la iteración 2. |
+| 1.3 | 2026-11-20 | Se agrega A6 (vacaciones disponibles, usadas y restantes); reglas en Inception de la iteración 3. |
