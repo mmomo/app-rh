@@ -24,6 +24,10 @@ export const MENSAJE_OBLIGATORIO = 'Este campo es obligatorio.'
 /** R4: mayoría de edad en México. */
 export const EDAD_MINIMA = 18
 
+/** R7: edad y antigüedad máximas, en años cumplidos a hoy. */
+export const EDAD_MAXIMA = 100
+export const ANTIGUEDAD_MAXIMA = 100
+
 const OBLIGATORIOS: CampoEmpleado[] = [
   'nombre',
   'apellidos',
@@ -95,6 +99,7 @@ type OpcionesValidacion = {
  * R3: el salario mensual capturado no puede ser menor al mínimo general vigente.
  * R4: a la fecha de ingreso debía tener al menos 18 años.
  * R5: el NSS tiene 11 dígitos y no puede estar asignado a otro empleado.
+ * R7: hoy no puede tener más de 100 años de edad ni de antigüedad.
  * R2c: la fecha de ingreso no puede ser futura ni posterior al historial ya registrado.
  */
 export function validarEmpleado(
@@ -109,6 +114,8 @@ export function validarEmpleado(
     errores.fechaIngreso = 'Ingresa una fecha válida.'
   } else if (!errores.fechaIngreso && form.fechaIngreso > hoy) {
     errores.fechaIngreso = 'La fecha de ingreso no puede ser futura.'
+  } else if (!errores.fechaIngreso && calcularAntiguedad(form.fechaIngreso, hoy).anios > ANTIGUEDAD_MAXIMA) {
+    errores.fechaIngreso = `Tendría ${calcularAntiguedad(form.fechaIngreso, hoy).anios} años de antigüedad; el máximo es ${ANTIGUEDAD_MAXIMA}.`
   } else if (!errores.fechaIngreso && primerMovimiento && form.fechaIngreso > primerMovimiento) {
     errores.fechaIngreso = `Tiene permisos o aumentos desde el ${formatearFecha(primerMovimiento)}; la fecha de ingreso no puede ser posterior.`
   }
@@ -116,6 +123,8 @@ export function validarEmpleado(
     errores.fechaNacimiento = 'Ingresa una fecha válida.'
   } else if (!errores.fechaNacimiento && form.fechaNacimiento > hoy) {
     errores.fechaNacimiento = 'La fecha de nacimiento no puede ser futura.'
+  } else if (!errores.fechaNacimiento && calcularEdad(form.fechaNacimiento, hoy) > EDAD_MAXIMA) {
+    errores.fechaNacimiento = `Tendría ${calcularEdad(form.fechaNacimiento, hoy)} años; la edad máxima es ${EDAD_MAXIMA}.`
   } else if (!errores.fechaNacimiento && !errores.fechaIngreso) {
     const edad = calcularEdad(form.fechaNacimiento, form.fechaIngreso)
     if (form.fechaNacimiento >= form.fechaIngreso) {
@@ -159,6 +168,20 @@ export function datosDesdeForm(form: FormEmpleado): DatosEmpleado {
 /** Registros anteriores a v1.2 pueden no tener NSS ni fecha de nacimiento. */
 export function datosIncompletos(e: Empleado): boolean {
   return !e.nss || !e.fechaNacimiento
+}
+
+/** R7: años de edad o de antigüedad que rebasan el máximo con el paso del tiempo (vacío si cumple). */
+export function excesoDeAnios(e: Empleado, hoy: string = hoyISO()): { edad?: number; antiguedad?: number } {
+  const edad = e.fechaNacimiento ? calcularEdad(e.fechaNacimiento, hoy) : 0
+  const antiguedad = calcularAntiguedad(e.fechaIngreso, hoy).anios
+  return {
+    ...(edad > EDAD_MAXIMA && { edad }),
+    ...(antiguedad > ANTIGUEDAD_MAXIMA && { antiguedad }),
+  }
+}
+
+export function superaLimiteAnios(e: Empleado, hoy?: string): boolean {
+  return Object.keys(excesoDeAnios(e, hoy)).length > 0
 }
 
 export function nombreCompleto(e: Pick<Empleado, 'nombre' | 'apellidos'>): string {

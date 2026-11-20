@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest'
 import {
   calcularEdad,
   datosDesdeForm,
+  excesoDeAnios,
   fechaPrimerMovimiento,
   formVacio,
+  superaLimiteAnios,
   MENSAJE_OBLIGATORIO,
   validarEmpleado,
   type FormEmpleado,
@@ -129,6 +131,41 @@ describe('validarEmpleado (R5)', () => {
   it('ignora espacios en los extremos', () => {
     expect(validarEmpleado({ ...formValido, nss: ' 12345678901 ' })).toEqual({})
     expect(datosDesdeForm({ ...formValido, nss: ' 12345678901 ' }).nss).toBe('12345678901')
+  })
+})
+
+describe('validarEmpleado (R7)', () => {
+  const hoy = '2026-11-20'
+
+  it('caso de prueba: nacimiento 21/11/1925 (100 años) → aceptado; 20/11/1925 (101 años) → bloqueado', () => {
+    const ingreso = '1960-01-01'
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '1925-11-21', fechaIngreso: ingreso }, { hoy })).toEqual({})
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '1925-11-20', fechaIngreso: ingreso }, { hoy }).fechaNacimiento).toBe(
+      'Tendría 101 años; la edad máxima es 100.',
+    )
+  })
+
+  it('caso de prueba: ingreso 20/11/1925 → bloqueado por antigüedad mayor a 100 años', () => {
+    const errores = validarEmpleado({ ...formValido, fechaNacimiento: '1900-01-01', fechaIngreso: '1925-11-20' }, { hoy })
+    expect(errores.fechaIngreso).toBe('Tendría 101 años de antigüedad; el máximo es 100.')
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '1926-11-20', fechaIngreso: '1950-01-01' }, { hoy })).toEqual({})
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '1900-01-01', fechaIngreso: '1926-11-20' }, { hoy }).fechaIngreso).toBeUndefined()
+  })
+})
+
+describe('excesoDeAnios (R7)', () => {
+  const base = {
+    id: 'e', nombre: 'Ana', apellidos: 'López', puesto: 'P', departamento: 'D', salarioInicial: 10000,
+    fechaNacimiento: '1925-11-21', fechaIngreso: '1950-01-01',
+  }
+
+  it('un registro guardado con 100 años rebasa el límite al cumplir 101', () => {
+    expect(superaLimiteAnios(base, '2026-11-20')).toBe(false)
+    expect(excesoDeAnios(base, '2026-11-21')).toEqual({ edad: 101 })
+  })
+
+  it('detecta la antigüedad aunque falte la fecha de nacimiento', () => {
+    expect(excesoDeAnios({ ...base, fechaNacimiento: undefined, fechaIngreso: '1925-01-01' }, '2026-11-20')).toEqual({ antiguedad: 101 })
   })
 })
 

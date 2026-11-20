@@ -11,7 +11,7 @@ const HOY = '2026-11-20'
 const [maria, carlos] = EJEMPLOS.empleados
 
 describe('empleados de ejemplo (A7)', () => {
-  it('cada empleado cumple R1, R3, R4, R5 y R2c', () => {
+  it('cada empleado cumple R1, R3, R4, R5, R7 y R2c', () => {
     for (const e of EJEMPLOS.empleados) {
       expect(validarEmpleado(formDesdeEmpleado(e), { hoy: HOY, empleados: EJEMPLOS.empleados, idActual: e.id }), e.id).toEqual({})
     }
