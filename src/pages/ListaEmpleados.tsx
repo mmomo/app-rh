@@ -4,16 +4,23 @@ import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { datosIncompletos, nombreCompleto } from '../domain/empleado'
 import { formatearMoneda } from '../domain/formato'
+import type { Empleado } from '../domain/tipos'
 import { salarioVigente } from '../domain/salario'
+import { saldoVacaciones } from '../domain/vacaciones'
 
 export function ListaEmpleados() {
-  const { empleados, aumentos } = useEstado()
+  const { empleados, aumentos, permisos } = useEstado()
   const [busqueda, setBusqueda] = useState('')
 
   const termino = busqueda.trim().toLowerCase()
   const visibles = empleados
     .filter((e) => nombreCompleto(e).toLowerCase().includes(termino))
     .sort((a, b) => nombreCompleto(a).localeCompare(nombreCompleto(b), 'es'))
+
+  function textoVacaciones(e: Empleado) {
+    const { corresponden, restantes } = saldoVacaciones(e, permisos)
+    return corresponden === 0 ? 'Sin derecho aún' : `${restantes} de ${corresponden}`
+  }
 
   function eliminar(id: string, nombre: string) {
     if (window.confirm(`¿Eliminar a ${nombre}? Se borrará también su historial.`)) {
@@ -50,6 +57,7 @@ export function ListaEmpleados() {
                 <th scope="col">Departamento</th>
                 <th scope="col">Antigüedad</th>
                 <th scope="col">Salario vigente</th>
+                <th scope="col">Vacaciones restantes</th>
                 <th scope="col">
                   <span className="sr-only">Acciones</span>
                 </th>
@@ -68,6 +76,7 @@ export function ListaEmpleados() {
                     <td>{e.departamento}</td>
                     <td>{formatearAntiguedad(calcularAntiguedad(e.fechaIngreso))}</td>
                     <td>{formatearMoneda(salarioVigente(e, aumentos))}</td>
+                    <td>{textoVacaciones(e)}</td>
                     <td className="acciones">
                       <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
                         Editar

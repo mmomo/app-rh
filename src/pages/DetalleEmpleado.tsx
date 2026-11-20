@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { SeccionAumentos } from '../components/SeccionAumentos'
 import { SeccionPermisos } from '../components/SeccionPermisos'
+import { SeccionVacaciones } from '../components/SeccionVacaciones'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { calcularEdad, datosIncompletos, nombreCompleto } from '../domain/empleado'
@@ -74,6 +75,7 @@ export function DetalleEmpleado() {
         <dd>{empleado.telefono ?? '—'}</dd>
       </dl>
 
+      <SeccionVacaciones empleado={empleado} permisos={permisos} />
       <SeccionAumentos empleado={empleado} aumentos={aumentos} />
       <SeccionPermisos empleado={empleado} permisos={permisos} />
     </section>
