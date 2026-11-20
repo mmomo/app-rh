@@ -37,7 +37,7 @@ El monto cambia cada 1 de enero, así que debe quedar en un solo lugar del códi
 | Validación de aumentos | El nuevo salario también debe cumplir R3. Ya debe ser mayor que el vigente (R2b), así que R3 solo cambia algo si el vigente quedó por debajo del mínimo (datos previos). |
 | Etiquetas | "Salario inicial (MXN)" pasa a "Salario mensual inicial (MXN)"; "Nuevo salario" pasa a "Nuevo salario mensual". |
 | Detalle / lista | Mostrar NSS y edad en el detalle. |
-| **Datos existentes** | Los empleados ya guardados en `localStorage` no tienen NSS ni fecha de nacimiento. Ver pregunta 5. |
+| **Datos existentes** | Los empleados ya guardados en `localStorage` no tienen NSS ni fecha de nacimiento. Ver §5. |
 
 **Limitación conocida (R5):** con `localStorage`, la unicidad del NSS solo se puede garantizar dentro del mismo navegador. Dos personas en navegadores distintos podrían registrar el mismo NSS. Garantizarla para toda la organización requiere un backend compartido, que no está en el alcance de esta iteración.
 
