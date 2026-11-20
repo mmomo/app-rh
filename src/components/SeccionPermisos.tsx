@@ -10,12 +10,23 @@ import {
   type FormPermiso,
 } from '../domain/permiso'
 import type { Empleado, Errores, Permiso, TipoPermiso } from '../domain/tipos'
+import { diasLaborables } from '../domain/vacaciones'
 import { Campo } from './Campo'
 
 type Props = { empleado: Empleado; permisos: Permiso[] }
 
 const formInicial: FormPermiso = { tipo: '', fechaInicio: '', fechaFin: '', motivo: '' }
 const TIPOS = Object.keys(ETIQUETA_TIPO_PERMISO) as TipoPermiso[]
+const CLASE_TIPO: Record<TipoPermiso, string> = {
+  CON_GOCE: 'etiqueta--con-goce',
+  SIN_GOCE: 'etiqueta--sin-goce',
+  VACACIONES: 'etiqueta--vacaciones',
+}
+
+/** Las vacaciones se descuentan en días laborables; los demás permisos se muestran en días naturales. */
+function textoDias(p: Permiso): string {
+  return p.tipo === 'VACACIONES' ? `${diasLaborables(p.fechaInicio, p.fechaFin)} laborables` : String(diasPermiso(p))
+}
 
 export function SeccionPermisos({ empleado, permisos }: Props) {
   const [form, setForm] = useState(formInicial)
@@ -117,13 +128,13 @@ export function SeccionPermisos({ empleado, permisos }: Props) {
               {historial.map((p) => (
                 <tr key={p.id}>
                   <td>
-                    <span className={`etiqueta etiqueta--${p.tipo === 'CON_GOCE' ? 'con-goce' : 'sin-goce'}`}>
+                    <span className={`etiqueta ${CLASE_TIPO[p.tipo]}`}>
                       {ETIQUETA_TIPO_PERMISO[p.tipo]}
                     </span>
                   </td>
                   <td>{formatearFecha(p.fechaInicio)}</td>
                   <td>{formatearFecha(p.fechaFin)}</td>
-                  <td>{diasPermiso(p)}</td>
+                  <td>{textoDias(p)}</td>
                   <td>{p.motivo ?? '—'}</td>
                 </tr>
               ))}

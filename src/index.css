@@ -100,3 +100,4 @@ td .etiqueta { margin-left: 0; }
   background: #fff4e5; border: 1px solid #e0a35c; border-left-width: 4px;
   border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px;
 }
+.etiqueta--vacaciones { background: #e3ecfa; color: var(--primary); }

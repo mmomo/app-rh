@@ -74,3 +74,19 @@ describe('consistencia con la fecha de ingreso (R2c)', () => {
     expect(store.getEstado().permisos).toEqual([])
   })
 })
+
+describe('vacaciones como tipo de permiso (A6)', () => {
+  it('se registran con su tipo visible y los días laborables descontados', async () => {
+    const ana = altaAna()
+    const { user } = renderApp(`/empleados/${ana.id}`)
+    await user.click(screen.getByRole('radio', { name: 'Vacaciones' }))
+    await user.type(screen.getByLabelText(/^Fecha de inicio/), '2026-11-30')
+    await user.type(screen.getByLabelText(/^Fecha de fin/), '2026-12-06')
+    await user.click(screen.getByRole('button', { name: 'Registrar permiso' }))
+
+    const filas = within(screen.getByRole('table', { name: 'Historial de permisos' })).getAllByRole('row').slice(1)
+    expect(filas).toHaveLength(1)
+    expect(filas[0]).toHaveTextContent('Vacaciones30/11/202606/12/20265 laborables')
+    expect(store.getEstado().permisos[0].tipo).toBe('VACACIONES')
+  })
+})
