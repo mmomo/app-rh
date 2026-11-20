@@ -5,6 +5,7 @@ import type { Errores, Permiso, TipoPermiso } from './tipos'
 export const ETIQUETA_TIPO_PERMISO: Record<TipoPermiso, string> = {
   CON_GOCE: 'Con goce de sueldo',
   SIN_GOCE: 'Sin goce de sueldo',
+  VACACIONES: 'Vacaciones',
 }
 
 export type FormPermiso = { tipo: TipoPermiso | ''; fechaInicio: string; fechaFin: string; motivo: string }

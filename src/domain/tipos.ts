@@ -17,7 +17,7 @@ export type Empleado = {
 
 export type DatosEmpleado = Omit<Empleado, 'id'>
 
-export type TipoPermiso = 'CON_GOCE' | 'SIN_GOCE'
+export type TipoPermiso = 'CON_GOCE' | 'SIN_GOCE' | 'VACACIONES'
 
 export type Permiso = {
   id: string
