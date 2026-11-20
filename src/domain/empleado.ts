@@ -154,6 +154,11 @@ export function datosDesdeForm(form: FormEmpleado): DatosEmpleado {
   }
 }
 
+/** Registros anteriores a v1.2 pueden no tener NSS ni fecha de nacimiento. */
+export function datosIncompletos(e: Empleado): boolean {
+  return !e.nss || !e.fechaNacimiento
+}
+
 export function nombreCompleto(e: Pick<Empleado, 'nombre' | 'apellidos'>): string {
   return `${e.nombre} ${e.apellidos}`
 }

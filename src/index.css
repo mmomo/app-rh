@@ -94,3 +94,9 @@ th { font-size: 0.9rem; color: var(--muted); }
 td .etiqueta { margin-left: 0; }
 .etiqueta--con-goce { background: #e2f2e7; color: var(--success); }
 .etiqueta--sin-goce { background: #fbe9d8; color: #8a4500; }
+
+.etiqueta--aviso { background: #fbe9d8; color: #8a4500; }
+.alerta {
+  background: #fff4e5; border: 1px solid #e0a35c; border-left-width: 4px;
+  border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px;
+}

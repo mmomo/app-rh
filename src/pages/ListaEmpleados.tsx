@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
-import { nombreCompleto } from '../domain/empleado'
+import { datosIncompletos, nombreCompleto } from '../domain/empleado'
 import { formatearMoneda } from '../domain/formato'
 import { salarioVigente } from '../domain/salario'
 
@@ -62,6 +62,7 @@ export function ListaEmpleados() {
                   <tr key={e.id}>
                     <td>
                       <Link to={`/empleados/${e.id}`}>{nombre}</Link>
+                      {datosIncompletos(e) && <span className="etiqueta etiqueta--aviso">Datos incompletos</span>}
                     </td>
                     <td>{e.puesto}</td>
                     <td>{e.departamento}</td>

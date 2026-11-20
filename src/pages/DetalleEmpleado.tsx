@@ -3,7 +3,7 @@ import { SeccionAumentos } from '../components/SeccionAumentos'
 import { SeccionPermisos } from '../components/SeccionPermisos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
-import { calcularEdad, nombreCompleto } from '../domain/empleado'
+import { calcularEdad, datosIncompletos, nombreCompleto } from '../domain/empleado'
 import { formatearFecha } from '../domain/fechas'
 import { formatearMoneda } from '../domain/formato'
 import { salarioVigente } from '../domain/salario'
@@ -41,6 +41,13 @@ export function DetalleEmpleado() {
           </button>
         </div>
       </div>
+
+      {datosIncompletos(empleado) && (
+        <p className="alerta">
+          <strong>Datos incompletos:</strong> falta registrar el NSS o la fecha de nacimiento.{' '}
+          <Link to={`/empleados/${empleado.id}/editar`}>Completar datos</Link>
+        </p>
+      )}
 
       <dl className="ficha">
         <dt>NSS</dt>

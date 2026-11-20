@@ -124,3 +124,30 @@ describe('NSS único (R5)', () => {
     expect(nss).toHaveAccessibleDescription(/Este NSS ya está asignado a Ana López/)
   })
 })
+
+describe('empleados registrados antes de v1.2', () => {
+  it('muestran "Datos incompletos" y al editarlos se exigen NSS y fecha de nacimiento', async () => {
+    store.crearEmpleado({
+      nombre: 'Luis', apellidos: 'Pérez', puesto: 'Dev', departamento: 'TI',
+      fechaIngreso: '2021-01-01', salarioInicial: 8000,
+    })
+    const { user } = renderApp()
+    expect(screen.getByText('Datos incompletos')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Luis Pérez' }))
+    expect(screen.getByText(/falta registrar el NSS o la fecha de nacimiento/)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('link', { name: 'Completar datos' }))
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    expect(screen.getByLabelText(/^Número de Seguridad Social/)).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByLabelText(/^Fecha de nacimiento/)).toHaveAttribute('aria-invalid', 'true')
+    // El salario guardado antes de R3 ($8,000) no bloquea la edición si no cambia.
+    expect(screen.getByLabelText(/^Salario mensual inicial/)).not.toHaveAttribute('aria-invalid')
+
+    await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '1990-05-20')
+    await user.type(screen.getByLabelText(/^Número de Seguridad Social/), '98765432109')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    expect(screen.getByRole('heading', { name: 'Luis Pérez' })).toBeInTheDocument()
+    expect(screen.queryByText(/Datos incompletos/)).not.toBeInTheDocument()
+  })
+})
