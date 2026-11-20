@@ -9,6 +9,8 @@ export type Empleado = {
   salarioInicial: number
   /** ISO 'yyyy-mm-dd'. Obligatoria desde v1.2; puede faltar en registros anteriores. */
   fechaNacimiento?: string
+  /** Número de Seguridad Social, 11 dígitos, único. Obligatorio desde v1.2; puede faltar en registros anteriores. */
+  nss?: string
   email?: string
   telefono?: string
 }

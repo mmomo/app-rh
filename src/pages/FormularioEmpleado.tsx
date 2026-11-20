@@ -14,7 +14,7 @@ import {
 } from '../domain/empleado'
 import { hoyISO } from '../domain/fechas'
 import { AYUDA_SALARIO_MINIMO, SALARIO_MINIMO_MENSUAL } from '../domain/salarioMinimo'
-import type { Errores } from '../domain/tipos'
+import type { Empleado, Errores } from '../domain/tipos'
 import { NoEncontrado } from './NoEncontrado'
 
 export function FormularioEmpleado() {
@@ -31,6 +31,7 @@ export function FormularioEmpleado() {
       salarioBloqueado={aumentos.some((a) => a.empleadoId === id)}
       primerMovimiento={id ? fechaPrimerMovimiento(id, permisos, aumentos) : undefined}
       salarioGuardado={existente?.salarioInicial}
+      empleados={empleados}
     />
   )
 }
@@ -41,9 +42,10 @@ type PropsFormulario = {
   salarioBloqueado: boolean
   primerMovimiento?: string
   salarioGuardado?: number
+  empleados: Empleado[]
 }
 
-function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGuardado }: PropsFormulario) {
+function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGuardado, empleados }: PropsFormulario) {
   const navigate = useNavigate()
   const [form, setForm] = useState(inicial)
   const [errores, setErrores] = useState<Errores<CampoEmpleado>>({})
@@ -57,7 +59,7 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGu
 
   function guardar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const nuevosErrores = validarEmpleado(form, { primerMovimiento, salarioGuardado })
+    const nuevosErrores = validarEmpleado(form, { primerMovimiento, salarioGuardado, empleados, idActual: id })
     setErrores(nuevosErrores)
     const primero = Object.keys(nuevosErrores)[0]
     if (primero) {
@@ -88,6 +90,15 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGu
           type="date"
           max={hoyISO()}
           ayuda={`Debe tener al menos ${EDAD_MINIMA} años a su fecha de ingreso.`}
+        />
+        <Campo
+          {...props('nss')}
+          etiqueta="Número de Seguridad Social (NSS)"
+          obligatorio
+          inputMode="numeric"
+          maxLength={11}
+          autoComplete="off"
+          ayuda="11 dígitos, sin espacios ni guiones."
         />
         <Campo {...props('puesto')} etiqueta="Puesto" obligatorio />
         <Campo {...props('departamento')} etiqueta="Departamento" obligatorio />

@@ -14,6 +14,7 @@ const formValido: FormEmpleado = {
   nombre: 'Ana',
   apellidos: 'López',
   fechaNacimiento: '1990-05-20',
+  nss: '12345678901',
   puesto: 'Analista',
   departamento: 'Finanzas',
   fechaIngreso: '2020-03-15',
@@ -34,7 +35,7 @@ describe('validarEmpleado (R1)', () => {
   it('marca todos los obligatorios vacíos y no los opcionales', () => {
     const errores = validarEmpleado(formVacio)
     expect(Object.keys(errores).sort()).toEqual(
-      ['apellidos', 'departamento', 'fechaIngreso', 'fechaNacimiento', 'nombre', 'puesto', 'salarioInicial'].sort(),
+      ['apellidos', 'departamento', 'fechaIngreso', 'fechaNacimiento', 'nombre', 'nss', 'puesto', 'salarioInicial'].sort(),
     )
   })
 
@@ -105,6 +106,30 @@ describe('validarEmpleado (R4)', () => {
   })
 })
 
+describe('validarEmpleado (R5)', () => {
+  const ana = { id: 'e1', ...datosDesdeForm(formValido) }
+
+  it('caso de prueba: Ana con NSS 12345678901; alta de Luis con el mismo NSS → bloqueado', () => {
+    const luis = { ...formValido, nombre: 'Luis', apellidos: 'Pérez' }
+    expect(validarEmpleado(luis, { empleados: [ana] })).toEqual({ nss: 'Este NSS ya está asignado a Ana López.' })
+  })
+
+  it('al editar, el propio NSS no cuenta como repetido', () => {
+    expect(validarEmpleado(formValido, { empleados: [ana], idActual: 'e1' })).toEqual({})
+  })
+
+  it('caso de prueba: NSS de 10 dígitos → bloqueado; también letras, guiones o 12 dígitos', () => {
+    for (const nss of ['1234567890', '1234567890A', '1234-567890', '123456789012']) {
+      expect(validarEmpleado({ ...formValido, nss }).nss).toBe('El NSS debe tener exactamente 11 dígitos.')
+    }
+  })
+
+  it('ignora espacios en los extremos', () => {
+    expect(validarEmpleado({ ...formValido, nss: ' 12345678901 ' })).toEqual({})
+    expect(datosDesdeForm({ ...formValido, nss: ' 12345678901 ' }).nss).toBe('12345678901')
+  })
+})
+
 describe('fechaPrimerMovimiento', () => {
   it('devuelve la fecha más antigua entre permisos y aumentos del empleado', () => {
     const permisos = [{ id: 'p', empleadoId: 'e1', tipo: 'CON_GOCE' as const, fechaInicio: '2024-05-01', fechaFin: '2024-05-02' }]
@@ -123,6 +148,7 @@ describe('datosDesdeForm', () => {
       nombre: 'Ana',
       apellidos: 'López',
       fechaNacimiento: '1990-05-20',
+      nss: '12345678901',
       puesto: 'Analista',
       departamento: 'Finanzas',
       fechaIngreso: '2020-03-15',

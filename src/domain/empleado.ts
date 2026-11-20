@@ -8,6 +8,7 @@ export type FormEmpleado = {
   nombre: string
   apellidos: string
   fechaNacimiento: string
+  nss: string
   puesto: string
   departamento: string
   fechaIngreso: string
@@ -27,6 +28,7 @@ const OBLIGATORIOS: CampoEmpleado[] = [
   'nombre',
   'apellidos',
   'fechaNacimiento',
+  'nss',
   'puesto',
   'departamento',
   'fechaIngreso',
@@ -37,6 +39,7 @@ export const formVacio: FormEmpleado = {
   nombre: '',
   apellidos: '',
   fechaNacimiento: '',
+  nss: '',
   puesto: '',
   departamento: '',
   fechaIngreso: '',
@@ -50,6 +53,7 @@ export function formDesdeEmpleado(e: Empleado): FormEmpleado {
     nombre: e.nombre,
     apellidos: e.apellidos,
     fechaNacimiento: e.fechaNacimiento ?? '',
+    nss: e.nss ?? '',
     puesto: e.puesto,
     departamento: e.departamento,
     fechaIngreso: e.fechaIngreso,
@@ -79,6 +83,10 @@ type OpcionesValidacion = {
   primerMovimiento?: string
   /** Al editar: salario inicial guardado; si no cambia, no se vuelve a validar contra el mínimo vigente. */
   salarioGuardado?: number
+  /** Empleados ya registrados, para validar que el NSS no se repita. */
+  empleados?: Empleado[]
+  /** Al editar: id del empleado, que se excluye de la búsqueda de NSS repetido. */
+  idActual?: string
 }
 
 /**
@@ -86,11 +94,12 @@ type OpcionesValidacion = {
  * R2b: el salario inicial debe ser mayor a 0.
  * R3: el salario mensual capturado no puede ser menor al mínimo general vigente.
  * R4: a la fecha de ingreso debía tener al menos 18 años.
+ * R5: el NSS tiene 11 dígitos y no puede estar asignado a otro empleado.
  * R2c: la fecha de ingreso no puede ser futura ni posterior al historial ya registrado.
  */
 export function validarEmpleado(
   form: FormEmpleado,
-  { hoy = hoyISO(), primerMovimiento, salarioGuardado }: OpcionesValidacion = {},
+  { hoy = hoyISO(), primerMovimiento, salarioGuardado, empleados = [], idActual }: OpcionesValidacion = {},
 ): Errores<CampoEmpleado> {
   const errores: Errores<CampoEmpleado> = {}
   for (const campo of OBLIGATORIOS) {
@@ -113,6 +122,12 @@ export function validarEmpleado(
       errores.fechaNacimiento = `Debe tener al menos ${EDAD_MINIMA} años a su fecha de ingreso (${formatearFecha(form.fechaIngreso)}).`
     }
   }
+  if (!errores.nss) {
+    const nss = form.nss.trim()
+    const otro = empleados.find((e) => e.nss === nss && e.id !== idActual)
+    if (!/^\d{11}$/.test(nss)) errores.nss = 'El NSS debe tener exactamente 11 dígitos.'
+    else if (otro) errores.nss = `Este NSS ya está asignado a ${nombreCompleto(otro)}.`
+  }
   if (!errores.salarioInicial) {
     const salario = Number(form.salarioInicial)
     if (!Number.isFinite(salario)) errores.salarioInicial = 'Ingresa un monto numérico.'
@@ -129,6 +144,7 @@ export function datosDesdeForm(form: FormEmpleado): DatosEmpleado {
     nombre: form.nombre.trim(),
     apellidos: form.apellidos.trim(),
     fechaNacimiento: form.fechaNacimiento,
+    nss: form.nss.trim(),
     puesto: form.puesto.trim(),
     departamento: form.departamento.trim(),
     fechaIngreso: form.fechaIngreso,

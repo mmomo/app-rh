@@ -12,6 +12,7 @@ describe('CRUD de empleados (A1)', () => {
     await user.type(screen.getByLabelText(/^Nombre/), 'Ana')
     await user.type(screen.getByLabelText(/^Apellidos/), 'López')
     await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '1990-05-20')
+    await user.type(screen.getByLabelText(/^Número de Seguridad Social/), '12345678901')
     await user.type(screen.getByLabelText(/^Puesto/), 'Analista')
     await user.type(screen.getByLabelText(/^Departamento/), 'Finanzas')
     await user.type(screen.getByLabelText(/^Fecha de ingreso/), '2020-03-15')
@@ -71,6 +72,7 @@ describe('datos obligatorios (R1)', () => {
     await user.type(screen.getByLabelText(/^Nombre/), 'Ana')
     await user.type(screen.getByLabelText(/^Apellidos/), 'López')
     await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '1990-05-20')
+    await user.type(screen.getByLabelText(/^Número de Seguridad Social/), '12345678901')
     await user.type(screen.getByLabelText(/^Puesto/), 'Analista')
     await user.type(screen.getByLabelText(/^Departamento/), 'Finanzas')
     await user.type(screen.getByLabelText(/^Salario mensual inicial/), '10000')
@@ -105,5 +107,20 @@ describe('edad mínima (R4)', () => {
     const nacimiento = screen.getByLabelText(/^Fecha de nacimiento/)
     expect(nacimiento).toHaveAttribute('aria-invalid', 'true')
     expect(nacimiento).toHaveAccessibleDescription(/Debe tener al menos 18 años a su fecha de ingreso \(19\/05\/2023\)/)
+  })
+})
+
+describe('NSS único (R5)', () => {
+  it('caso de prueba: alta de Luis con el NSS de Ana → bloqueado y se marca el campo', async () => {
+    store.crearEmpleado({
+      nombre: 'Ana', apellidos: 'López', puesto: 'Analista', departamento: 'Finanzas',
+      fechaIngreso: '2020-03-15', salarioInicial: 10000, fechaNacimiento: '1990-05-20', nss: '12345678901',
+    })
+    const { user } = renderApp('/empleados/nuevo')
+    await user.type(screen.getByLabelText(/^Número de Seguridad Social/), '12345678901')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    const nss = screen.getByLabelText(/^Número de Seguridad Social/)
+    expect(nss).toHaveAttribute('aria-invalid', 'true')
+    expect(nss).toHaveAccessibleDescription(/Este NSS ya está asignado a Ana López/)
   })
 })

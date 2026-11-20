@@ -43,6 +43,8 @@ export function DetalleEmpleado() {
       </div>
 
       <dl className="ficha">
+        <dt>NSS</dt>
+        <dd>{empleado.nss ?? '—'}</dd>
         <dt>Fecha de nacimiento</dt>
         <dd>
           {empleado.fechaNacimiento
