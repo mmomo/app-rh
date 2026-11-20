@@ -7,6 +7,8 @@ export type Empleado = {
   /** ISO 'yyyy-mm-dd' */
   fechaIngreso: string
   salarioInicial: number
+  /** ISO 'yyyy-mm-dd'. Obligatoria desde v1.2; puede faltar en registros anteriores. */
+  fechaNacimiento?: string
   email?: string
   telefono?: string
 }

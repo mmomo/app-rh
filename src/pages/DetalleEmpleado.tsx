@@ -3,7 +3,7 @@ import { SeccionAumentos } from '../components/SeccionAumentos'
 import { SeccionPermisos } from '../components/SeccionPermisos'
 import { store, useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
-import { nombreCompleto } from '../domain/empleado'
+import { calcularEdad, nombreCompleto } from '../domain/empleado'
 import { formatearFecha } from '../domain/fechas'
 import { formatearMoneda } from '../domain/formato'
 import { salarioVigente } from '../domain/salario'
@@ -43,6 +43,12 @@ export function DetalleEmpleado() {
       </div>
 
       <dl className="ficha">
+        <dt>Fecha de nacimiento</dt>
+        <dd>
+          {empleado.fechaNacimiento
+            ? `${formatearFecha(empleado.fechaNacimiento)} (${calcularEdad(empleado.fechaNacimiento)} años)`
+            : '—'}
+        </dd>
         <dt>Puesto</dt>
         <dd>{empleado.puesto}</dd>
         <dt>Departamento</dt>

@@ -1,3 +1,4 @@
+import { calcularAntiguedad } from './antiguedad'
 import { esFechaISOValida, formatearFecha, hoyISO } from './fechas'
 import { cumpleSalarioMinimo, MENSAJE_SALARIO_MINIMO } from './salarioMinimo'
 import type { Aumento, DatosEmpleado, Empleado, Errores, Permiso } from './tipos'
@@ -6,6 +7,7 @@ import type { Aumento, DatosEmpleado, Empleado, Errores, Permiso } from './tipos
 export type FormEmpleado = {
   nombre: string
   apellidos: string
+  fechaNacimiento: string
   puesto: string
   departamento: string
   fechaIngreso: string
@@ -18,9 +20,13 @@ export type CampoEmpleado = keyof FormEmpleado
 
 export const MENSAJE_OBLIGATORIO = 'Este campo es obligatorio.'
 
+/** R4: mayoría de edad en México. */
+export const EDAD_MINIMA = 18
+
 const OBLIGATORIOS: CampoEmpleado[] = [
   'nombre',
   'apellidos',
+  'fechaNacimiento',
   'puesto',
   'departamento',
   'fechaIngreso',
@@ -30,6 +36,7 @@ const OBLIGATORIOS: CampoEmpleado[] = [
 export const formVacio: FormEmpleado = {
   nombre: '',
   apellidos: '',
+  fechaNacimiento: '',
   puesto: '',
   departamento: '',
   fechaIngreso: '',
@@ -42,6 +49,7 @@ export function formDesdeEmpleado(e: Empleado): FormEmpleado {
   return {
     nombre: e.nombre,
     apellidos: e.apellidos,
+    fechaNacimiento: e.fechaNacimiento ?? '',
     puesto: e.puesto,
     departamento: e.departamento,
     fechaIngreso: e.fechaIngreso,
@@ -49,6 +57,11 @@ export function formDesdeEmpleado(e: Empleado): FormEmpleado {
     email: e.email ?? '',
     telefono: e.telefono ?? '',
   }
+}
+
+/** Años cumplidos a la fecha indicada. */
+export function calcularEdad(fechaNacimiento: string, aFecha: string = hoyISO()): number {
+  return calcularAntiguedad(fechaNacimiento, aFecha).anios
 }
 
 /** Fecha más antigua entre los permisos y aumentos del empleado, si tiene alguno. */
@@ -72,6 +85,7 @@ type OpcionesValidacion = {
  * R1: los campos obligatorios no pueden quedar vacíos.
  * R2b: el salario inicial debe ser mayor a 0.
  * R3: el salario mensual capturado no puede ser menor al mínimo general vigente.
+ * R4: a la fecha de ingreso debía tener al menos 18 años.
  * R2c: la fecha de ingreso no puede ser futura ni posterior al historial ya registrado.
  */
 export function validarEmpleado(
@@ -89,6 +103,16 @@ export function validarEmpleado(
   } else if (!errores.fechaIngreso && primerMovimiento && form.fechaIngreso > primerMovimiento) {
     errores.fechaIngreso = `Tiene permisos o aumentos desde el ${formatearFecha(primerMovimiento)}; la fecha de ingreso no puede ser posterior.`
   }
+  if (!errores.fechaNacimiento && !esFechaISOValida(form.fechaNacimiento)) {
+    errores.fechaNacimiento = 'Ingresa una fecha válida.'
+  } else if (!errores.fechaNacimiento && form.fechaNacimiento > hoy) {
+    errores.fechaNacimiento = 'La fecha de nacimiento no puede ser futura.'
+  } else if (!errores.fechaNacimiento && !errores.fechaIngreso) {
+    const edad = calcularEdad(form.fechaNacimiento, form.fechaIngreso)
+    if (form.fechaNacimiento > form.fechaIngreso || edad < EDAD_MINIMA) {
+      errores.fechaNacimiento = `Debe tener al menos ${EDAD_MINIMA} años a su fecha de ingreso (${formatearFecha(form.fechaIngreso)}).`
+    }
+  }
   if (!errores.salarioInicial) {
     const salario = Number(form.salarioInicial)
     if (!Number.isFinite(salario)) errores.salarioInicial = 'Ingresa un monto numérico.'
@@ -104,6 +128,7 @@ export function datosDesdeForm(form: FormEmpleado): DatosEmpleado {
   return {
     nombre: form.nombre.trim(),
     apellidos: form.apellidos.trim(),
+    fechaNacimiento: form.fechaNacimiento,
     puesto: form.puesto.trim(),
     departamento: form.departamento.trim(),
     fechaIngreso: form.fechaIngreso,

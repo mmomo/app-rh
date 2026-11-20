@@ -11,6 +11,7 @@ describe('CRUD de empleados (A1)', () => {
     await user.click(screen.getByRole('link', { name: 'Nuevo empleado' }))
     await user.type(screen.getByLabelText(/^Nombre/), 'Ana')
     await user.type(screen.getByLabelText(/^Apellidos/), 'López')
+    await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '1990-05-20')
     await user.type(screen.getByLabelText(/^Puesto/), 'Analista')
     await user.type(screen.getByLabelText(/^Departamento/), 'Finanzas')
     await user.type(screen.getByLabelText(/^Fecha de ingreso/), '2020-03-15')
@@ -69,6 +70,7 @@ describe('datos obligatorios (R1)', () => {
     const { user } = renderApp('/empleados/nuevo')
     await user.type(screen.getByLabelText(/^Nombre/), 'Ana')
     await user.type(screen.getByLabelText(/^Apellidos/), 'López')
+    await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '1990-05-20')
     await user.type(screen.getByLabelText(/^Puesto/), 'Analista')
     await user.type(screen.getByLabelText(/^Departamento/), 'Finanzas')
     await user.type(screen.getByLabelText(/^Salario mensual inicial/), '10000')
@@ -91,5 +93,17 @@ describe('salario mínimo (R3)', () => {
     const salario = screen.getByLabelText(/^Salario mensual inicial/)
     expect(salario).toHaveAttribute('aria-invalid', 'true')
     expect(salario).toHaveAccessibleDescription(/no puede ser menor al mínimo general 2026 \(\$9,582\.47\)/)
+  })
+})
+
+describe('edad mínima (R4)', () => {
+  it('caso de prueba: nacimiento 20/05/2005, ingreso 19/05/2023 → bloqueado y se marca el campo', async () => {
+    const { user } = renderApp('/empleados/nuevo')
+    await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '2005-05-20')
+    await user.type(screen.getByLabelText(/^Fecha de ingreso/), '2023-05-19')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    const nacimiento = screen.getByLabelText(/^Fecha de nacimiento/)
+    expect(nacimiento).toHaveAttribute('aria-invalid', 'true')
+    expect(nacimiento).toHaveAccessibleDescription(/Debe tener al menos 18 años a su fecha de ingreso \(19\/05\/2023\)/)
   })
 })

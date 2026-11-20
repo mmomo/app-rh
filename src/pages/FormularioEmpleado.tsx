@@ -4,6 +4,7 @@ import { Campo } from '../components/Campo'
 import { store, useEstado } from '../data/store'
 import {
   datosDesdeForm,
+  EDAD_MINIMA,
   fechaPrimerMovimiento,
   formDesdeEmpleado,
   formVacio,
@@ -80,6 +81,14 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGu
       <form noValidate onSubmit={guardar} className="formulario">
         <Campo {...props('nombre')} etiqueta="Nombre" obligatorio autoComplete="given-name" />
         <Campo {...props('apellidos')} etiqueta="Apellidos" obligatorio autoComplete="family-name" />
+        <Campo
+          {...props('fechaNacimiento')}
+          etiqueta="Fecha de nacimiento"
+          obligatorio
+          type="date"
+          max={hoyISO()}
+          ayuda={`Debe tener al menos ${EDAD_MINIMA} años a su fecha de ingreso.`}
+        />
         <Campo {...props('puesto')} etiqueta="Puesto" obligatorio />
         <Campo {...props('departamento')} etiqueta="Departamento" obligatorio />
         <Campo

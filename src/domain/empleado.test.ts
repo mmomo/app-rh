@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  calcularEdad,
   datosDesdeForm,
   fechaPrimerMovimiento,
   formVacio,
@@ -12,6 +13,7 @@ const formValido: FormEmpleado = {
   ...formVacio,
   nombre: 'Ana',
   apellidos: 'López',
+  fechaNacimiento: '1990-05-20',
   puesto: 'Analista',
   departamento: 'Finanzas',
   fechaIngreso: '2020-03-15',
@@ -32,7 +34,7 @@ describe('validarEmpleado (R1)', () => {
   it('marca todos los obligatorios vacíos y no los opcionales', () => {
     const errores = validarEmpleado(formVacio)
     expect(Object.keys(errores).sort()).toEqual(
-      ['apellidos', 'departamento', 'fechaIngreso', 'nombre', 'puesto', 'salarioInicial'].sort(),
+      ['apellidos', 'departamento', 'fechaIngreso', 'fechaNacimiento', 'nombre', 'puesto', 'salarioInicial'].sort(),
     )
   })
 
@@ -77,6 +79,32 @@ describe('validarEmpleado (R2c)', () => {
   })
 })
 
+describe('validarEmpleado (R4)', () => {
+  const nacimiento = '2005-05-20'
+
+  it('caso de prueba: nacimiento 20/05/2005, ingreso 19/05/2023 → bloqueado', () => {
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: nacimiento, fechaIngreso: '2023-05-19' })).toEqual({
+      fechaNacimiento: 'Debe tener al menos 18 años a su fecha de ingreso (19/05/2023).',
+    })
+  })
+
+  it('caso de prueba: nacimiento 20/05/2005, ingreso 20/05/2023 (cumple 18) → aceptado', () => {
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: nacimiento, fechaIngreso: '2023-05-20' })).toEqual({})
+  })
+
+  it('rechaza nacimiento futuro o posterior al ingreso', () => {
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '2027-01-01' }, { hoy: '2026-11-19' }).fechaNacimiento).toBe(
+      'La fecha de nacimiento no puede ser futura.',
+    )
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '2021-01-01' }).fechaNacimiento).toBeDefined()
+  })
+
+  it('calcula la edad en años cumplidos', () => {
+    expect(calcularEdad('2005-05-20', '2023-05-19')).toBe(17)
+    expect(calcularEdad('2005-05-20', '2023-05-20')).toBe(18)
+  })
+})
+
 describe('fechaPrimerMovimiento', () => {
   it('devuelve la fecha más antigua entre permisos y aumentos del empleado', () => {
     const permisos = [{ id: 'p', empleadoId: 'e1', tipo: 'CON_GOCE' as const, fechaInicio: '2024-05-01', fechaFin: '2024-05-02' }]
@@ -94,6 +122,7 @@ describe('datosDesdeForm', () => {
     expect(datosDesdeForm({ ...formValido, nombre: ' Ana ', email: '  ' })).toEqual({
       nombre: 'Ana',
       apellidos: 'López',
+      fechaNacimiento: '1990-05-20',
       puesto: 'Analista',
       departamento: 'Finanzas',
       fechaIngreso: '2020-03-15',
