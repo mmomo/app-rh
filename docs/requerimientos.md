@@ -1,6 +1,6 @@
 # Requerimientos: Sistema de Control de RR. HH.
 
-> Versión: 1.2 (borrador: R3–R5 en Inception)
+> Versión: 1.2
 
 ## 1. Contexto
 App para administrar la información del personal de una organización, que facilite la gestión de empleados y diversos procesos relacionados con recursos humanos.
@@ -23,9 +23,9 @@ App para administrar la información del personal de una organización, que faci
 | R2a | Fechas consistentes | Dado un permiso, cuando la fecha de fin es anterior a la de inicio, entonces se rechaza. | Inicio 10/12, fin 05/12 → bloqueado. | Asesora |
 | R2b | Salario válido | Dado un salario inicial o un aumento, cuando el monto es ≤ 0, o cuando un aumento no es mayor al salario vigente, entonces se rechaza. | Vigente $10,000, aumento a $9,500 → bloqueado; salario inicial $0 → bloqueado. | Instrucciones del reto |
 | R2c | Fechas vs. ingreso | Dada una fecha de ingreso, cuando es posterior a hoy, entonces se rechaza; dado un permiso o aumento, cuando su fecha es anterior a la fecha de ingreso, entonces se rechaza. | Ingreso 15/03/2020, permiso con inicio 01/01/2020 → bloqueado. | Instrucciones del reto |
-| R3 | Salario mínimo | Dado un salario inicial o un aumento, cuando el monto es menor al salario mínimo mexicano vigente, entonces se rechaza. | [Pendiente: depende de periodicidad y zona del salario] | Cliente (iteración 2) |
-| R4 | Edad mínima legal | Dado el alta de un empleado, cuando es menor de edad, entonces no se guarda y se marca el campo. | [Pendiente: depende de la fecha de referencia para la edad] | Cliente (iteración 2) |
-| R5 | NSS único | Dado el alta o edición de un empleado, cuando su NSS ya está asignado a otro empleado, entonces no se guarda y se marca el campo. | [Pendiente: depende del formato del NSS] | Cliente (iteración 2) |
+| R3 | Salario mínimo | Los salarios se capturan **mensuales**. Dado un salario inicial o un aumento, cuando el monto es menor al salario mínimo general mensual vigente (2026: $315.04 diarios × 365/12 = **$9,582.47**), entonces se rechaza. | Salario inicial $9,000 → bloqueado; $9,582.47 → aceptado. | Cliente (iteración 2) |
+| R4 | Edad mínima legal | Dado el alta o edición de un empleado, cuando a su **fecha de ingreso** tiene menos de 18 años según su fecha de nacimiento (obligatoria), entonces no se guarda y se marca el campo. | Nacimiento 20/05/2005, ingreso 19/05/2023 → bloqueado; ingreso 20/05/2023 → aceptado. | Cliente (iteración 2) |
+| R5 | NSS único | El NSS es obligatorio y tiene exactamente 11 dígitos. Dado el alta o edición de un empleado, cuando su NSS ya está asignado a otro empleado, entonces no se guarda y se marca el campo. | Ana con NSS 12345678901; alta de Luis con 12345678901 → bloqueado; NSS de 10 dígitos → bloqueado. | Cliente (iteración 2) |
 
 
 ## Historial de cambios
