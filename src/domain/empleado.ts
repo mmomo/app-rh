@@ -118,8 +118,10 @@ export function validarEmpleado(
     errores.fechaNacimiento = 'La fecha de nacimiento no puede ser futura.'
   } else if (!errores.fechaNacimiento && !errores.fechaIngreso) {
     const edad = calcularEdad(form.fechaNacimiento, form.fechaIngreso)
-    if (form.fechaNacimiento > form.fechaIngreso || edad < EDAD_MINIMA) {
-      errores.fechaNacimiento = `Debe tener al menos ${EDAD_MINIMA} años a su fecha de ingreso (${formatearFecha(form.fechaIngreso)}).`
+    if (form.fechaNacimiento >= form.fechaIngreso) {
+      errores.fechaNacimiento = 'La fecha de nacimiento debe ser anterior a la de ingreso.'
+    } else if (edad < EDAD_MINIMA) {
+      errores.fechaNacimiento = `A su fecha de ingreso (${formatearFecha(form.fechaIngreso)}) tenía ${edad} ${edad === 1 ? 'año' : 'años'}; es menor de edad.`
     }
   }
   if (!errores.nss) {

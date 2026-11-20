@@ -106,7 +106,7 @@ describe('edad mínima (R4)', () => {
     await user.click(screen.getByRole('button', { name: 'Guardar' }))
     const nacimiento = screen.getByLabelText(/^Fecha de nacimiento/)
     expect(nacimiento).toHaveAttribute('aria-invalid', 'true')
-    expect(nacimiento).toHaveAccessibleDescription(/Debe tener al menos 18 años a su fecha de ingreso \(19\/05\/2023\)/)
+    expect(nacimiento).toHaveAccessibleDescription(/A su fecha de ingreso \(19\/05\/2023\) tenía 17 años; es menor de edad/)
   })
 })
 

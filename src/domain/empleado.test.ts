@@ -85,7 +85,7 @@ describe('validarEmpleado (R4)', () => {
 
   it('caso de prueba: nacimiento 20/05/2005, ingreso 19/05/2023 → bloqueado', () => {
     expect(validarEmpleado({ ...formValido, fechaNacimiento: nacimiento, fechaIngreso: '2023-05-19' })).toEqual({
-      fechaNacimiento: 'Debe tener al menos 18 años a su fecha de ingreso (19/05/2023).',
+      fechaNacimiento: 'A su fecha de ingreso (19/05/2023) tenía 17 años; es menor de edad.',
     })
   })
 
@@ -97,7 +97,9 @@ describe('validarEmpleado (R4)', () => {
     expect(validarEmpleado({ ...formValido, fechaNacimiento: '2027-01-01' }, { hoy: '2026-11-19' }).fechaNacimiento).toBe(
       'La fecha de nacimiento no puede ser futura.',
     )
-    expect(validarEmpleado({ ...formValido, fechaNacimiento: '2021-01-01' }).fechaNacimiento).toBeDefined()
+    expect(validarEmpleado({ ...formValido, fechaNacimiento: '2021-01-01' }).fechaNacimiento).toBe(
+      'La fecha de nacimiento debe ser anterior a la de ingreso.',
+    )
   })
 
   it('calcula la edad en años cumplidos', () => {
