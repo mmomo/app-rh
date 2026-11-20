@@ -4,7 +4,7 @@
 
 **Producción:** https://app-rh-iota.vercel.app
 
-Aplicación web para administrar la información del personal: empleados (con NSS único y edad mínima de 18 años), permisos con y sin goce de sueldo, aumentos salariales mensuales (con salario vigente automático y respeto al salario mínimo) y antigüedad.
+Aplicación web para administrar la información del personal: empleados (con NSS único y edad mínima de 18 años), permisos con y sin goce de sueldo, vacaciones según la LFT (corresponden, usadas y restantes), aumentos salariales mensuales (con salario vigente automático y respeto al salario mínimo) y antigüedad.
 
 **Stack:** React 19 + Vite 6 + TypeScript, React Router, Vitest + Testing Library + axe-core. Despliegue en Vercel.
 
@@ -35,6 +35,7 @@ docs/
   requerimientos.md   Requerimientos con criterios de aceptación (v1.1)
   inception.md        Plan, modelo de datos y decisiones (AI-DLC: Inception)
   inception-iteracion-2.md  Inception de R3–R5
+  inception-iteracion-3.md  Inception de A6 y R6 (vacaciones)
   evidencias/         Evidencia de verificación de criterios
   prompts.md          Registro de prompts
 ```
@@ -52,6 +53,8 @@ docs/
 | R3 | `domain/salarioMinimo.ts`, `domain/empleado.ts`, `domain/salario.ts` | `domain/salarioMinimo.test.ts`, pruebas de dominio y `pages/empleados.test.tsx` |
 | R4 | `domain/empleado.ts` (`calcularEdad`, `EDAD_MINIMA`) | `domain/empleado.test.ts`, `pages/empleados.test.tsx` |
 | R5 | `domain/empleado.ts` (validación de NSS) | `domain/empleado.test.ts`, `pages/empleados.test.tsx` |
+| A6 | `domain/vacaciones.ts`, `components/SeccionVacaciones.tsx`, columna en `pages/ListaEmpleados.tsx` | `domain/vacaciones.test.ts`, `components/SeccionVacaciones.test.tsx` |
+| R6 | `domain/permiso.ts` (`validarPermiso`) | `domain/permiso.test.ts`, `components/SeccionPermisos.test.tsx` |
 
 ## Mantenimiento anual
 El salario mínimo cambia cada 1 de enero. Actualizar `SALARIO_MINIMO` en `src/domain/salarioMinimo.ts` con el monto diario publicado por CONASAMI en el DOF y ajustar la prueba de `salarioMinimo.test.ts`.

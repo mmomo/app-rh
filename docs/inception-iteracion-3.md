@@ -60,7 +60,7 @@ Mostrar los días de vacaciones disponibles que corresponden a cada empleado, cu
 
 Los cambios se reflejan en `docs/requerimientos.md` v1.3 (A6 y R6).
 
-## 6. Plan de Construction (un commit por requerimiento)
+## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-20
 1. **A6, dominio:** días por antigüedad (art. 76, con pruebas de toda la tabla), periodo vacacional, conteo de días laborables y saldo.
 2. **A6, registro:** tipo de permiso "Vacaciones" con conteo de días laborables en el historial.
 3. **R6:** validación del saldo al registrar vacaciones.
@@ -71,3 +71,13 @@ Los cambios se reflejan en `docs/requerimientos.md` v1.3 (A6 y R6).
 
 ## 7. Aprobación
 - Plan de Construction (§6) y detalles propuestos (§5) aprobados el 2026-11-20.
+
+## 8. Decisiones tomadas durante Construction
+- El tipo `VACACIONES` se agregó al modelo en el paso 1 (dominio), porque el cálculo del saldo lo necesita. El paso 2 completó su presentación en el historial.
+- **Mensajes de R6:**
+  - Sin derecho: se marca la fecha de inicio e indica cuándo cumple su primer año.
+  - Rango sin días laborables o saldo excedido: se marca la fecha de fin e indica cuántos días quedan en el periodo.
+- **Lista:** la columna "Vacaciones restantes" muestra "N de M" o "Sin derecho aún".
+
+## 9. Operations
+Desplegado automáticamente desde GitHub en https://app-rh-iota.vercel.app. Evidencia en `docs/evidencias/iteracion-3-produccion.md`.
