@@ -14,7 +14,7 @@ describe('CRUD de empleados (A1)', () => {
     await user.type(screen.getByLabelText(/^Puesto/), 'Analista')
     await user.type(screen.getByLabelText(/^Departamento/), 'Finanzas')
     await user.type(screen.getByLabelText(/^Fecha de ingreso/), '2020-03-15')
-    await user.type(screen.getByLabelText(/^Salario inicial/), '10000')
+    await user.type(screen.getByLabelText(/^Salario mensual inicial/), '10000')
     await user.click(screen.getByRole('button', { name: 'Guardar' }))
     expect(screen.getByRole('heading', { name: 'Ana López' })).toBeInTheDocument()
 
@@ -71,7 +71,7 @@ describe('datos obligatorios (R1)', () => {
     await user.type(screen.getByLabelText(/^Apellidos/), 'López')
     await user.type(screen.getByLabelText(/^Puesto/), 'Analista')
     await user.type(screen.getByLabelText(/^Departamento/), 'Finanzas')
-    await user.type(screen.getByLabelText(/^Salario inicial/), '10000')
+    await user.type(screen.getByLabelText(/^Salario mensual inicial/), '10000')
     await user.click(screen.getByRole('button', { name: 'Guardar' }))
 
     const fecha = screen.getByLabelText(/^Fecha de ingreso/)
@@ -80,5 +80,16 @@ describe('datos obligatorios (R1)', () => {
     expect(fecha).toHaveFocus()
     expect(screen.getByRole('heading', { name: 'Nuevo empleado' })).toBeInTheDocument()
     expect(store.getEstado().empleados).toEqual([])
+  })
+})
+
+describe('salario mínimo (R3)', () => {
+  it('caso de prueba: salario inicial $9,000 → bloqueado con mensaje junto al campo', async () => {
+    const { user } = renderApp('/empleados/nuevo')
+    await user.type(screen.getByLabelText(/^Salario mensual inicial/), '9000')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    const salario = screen.getByLabelText(/^Salario mensual inicial/)
+    expect(salario).toHaveAttribute('aria-invalid', 'true')
+    expect(salario).toHaveAccessibleDescription(/no puede ser menor al mínimo general 2026 \(\$9,582\.47\)/)
   })
 })

@@ -54,6 +54,12 @@ describe('validarAumento (R2b)', () => {
     expect(validarAumento({ ...form, salarioNuevo: '' }, ana, [], HOY).salarioNuevo).toBe('Este campo es obligatorio.')
   })
 
+  it('R3: rechaza un aumento por debajo del mínimo aunque supere al vigente', () => {
+    const anterior = { ...ana, salarioInicial: 5000 }
+    expect(validarAumento({ ...form, salarioNuevo: '6000' }, anterior, [], HOY).salarioNuevo).toMatch(/mínimo general/)
+    expect(validarAumento({ ...form, salarioNuevo: '9582.47' }, anterior, [], HOY)).toEqual({})
+  })
+
   it('compara contra el vigente tras aumentos previos', () => {
     const previos = [aumento('2025-01-01', 12000)]
     expect(validarAumento({ ...form, salarioNuevo: '11500' }, ana, previos, HOY).salarioNuevo).toBeDefined()

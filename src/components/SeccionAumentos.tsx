@@ -2,6 +2,7 @@ import { useState, type ChangeEvent, type FormEvent } from 'react'
 import { store } from '../data/store'
 import { formatearFecha, hoyISO } from '../domain/fechas'
 import { formatearMoneda } from '../domain/formato'
+import { AYUDA_SALARIO_MINIMO, SALARIO_MINIMO_MENSUAL } from '../domain/salarioMinimo'
 import { historialSalarial, validarAumento, type CampoAumento, type FormAumento } from '../domain/salario'
 import type { Aumento, Empleado, Errores } from '../domain/tipos'
 import { Campo } from './Campo'
@@ -59,12 +60,13 @@ export function SeccionAumentos({ empleado, aumentos }: Props) {
         />
         <Campo
           {...props('salarioNuevo')}
-          etiqueta="Nuevo salario (MXN)"
+          etiqueta="Nuevo salario mensual (MXN)"
           obligatorio
           type="number"
           inputMode="decimal"
           step="0.01"
-          min="0"
+          min={SALARIO_MINIMO_MENSUAL}
+          ayuda={AYUDA_SALARIO_MINIMO}
         />
         <Campo {...props('motivo')} etiqueta="Motivo del aumento" />
         <div className="acciones-formulario">

@@ -45,6 +45,16 @@ describe('validarEmpleado (R1)', () => {
     expect(validarEmpleado({ ...formValido, salarioInicial: '-5' }).salarioInicial).toBe('El salario debe ser mayor a $0.')
   })
 
+  it('R3 caso de prueba: salario inicial $9,000 → bloqueado; $9,582.47 → aceptado', () => {
+    expect(validarEmpleado({ ...formValido, salarioInicial: '9000' }).salarioInicial).toMatch(/mínimo general 2026 \(\$9,582\.47\)/)
+    expect(validarEmpleado({ ...formValido, salarioInicial: '9582.47' })).toEqual({})
+  })
+
+  it('R3: al editar, un salario guardado previo al mínimo vigente no bloquea si no cambia', () => {
+    expect(validarEmpleado({ ...formValido, salarioInicial: '5000' }, { salarioGuardado: 5000 })).toEqual({})
+    expect(validarEmpleado({ ...formValido, salarioInicial: '6000' }, { salarioGuardado: 5000 }).salarioInicial).toBeDefined()
+  })
+
   it('rechaza fechas inexistentes', () => {
     expect(validarEmpleado({ ...formValido, fechaIngreso: '2023-02-30' }).fechaIngreso).toBeDefined()
   })

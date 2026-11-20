@@ -2,6 +2,7 @@ import { esFechaISOValida, formatearFecha, hoyISO } from './fechas'
 import { formatearMoneda } from './formato'
 import type { Aumento, Empleado, Errores } from './tipos'
 import { MENSAJE_OBLIGATORIO } from './empleado'
+import { cumpleSalarioMinimo, MENSAJE_SALARIO_MINIMO } from './salarioMinimo'
 
 export type MovimientoSalarial = {
   id: string
@@ -36,7 +37,11 @@ export function salarioVigente(empleado: Empleado, aumentos: Aumento[]): number 
 export type FormAumento = { fecha: string; salarioNuevo: string; motivo: string }
 export type CampoAumento = keyof FormAumento
 
-/** R2b: el monto debe ser mayor a cero y mayor al salario vigente. R2c: la fecha no puede ser anterior al ingreso. */
+/**
+ * R2b: el monto debe ser mayor a cero y mayor al salario vigente.
+ * R2c: la fecha no puede ser anterior al ingreso.
+ * R3: el monto no puede ser menor al salario mínimo general vigente.
+ */
 export function validarAumento(
   form: FormAumento,
   empleado: Empleado,
@@ -61,6 +66,7 @@ export function validarAumento(
   else if (monto <= 0) errores.salarioNuevo = 'El salario debe ser mayor a $0.'
   else if (monto <= vigente)
     errores.salarioNuevo = `El nuevo salario debe ser mayor al vigente (${formatearMoneda(vigente)}).`
+  else if (!cumpleSalarioMinimo(monto)) errores.salarioNuevo = MENSAJE_SALARIO_MINIMO
 
   return errores
 }

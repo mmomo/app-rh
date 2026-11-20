@@ -12,6 +12,7 @@ import {
   type FormEmpleado,
 } from '../domain/empleado'
 import { hoyISO } from '../domain/fechas'
+import { AYUDA_SALARIO_MINIMO, SALARIO_MINIMO_MENSUAL } from '../domain/salarioMinimo'
 import type { Errores } from '../domain/tipos'
 import { NoEncontrado } from './NoEncontrado'
 
@@ -28,6 +29,7 @@ export function FormularioEmpleado() {
       inicial={existente ? formDesdeEmpleado(existente) : formVacio}
       salarioBloqueado={aumentos.some((a) => a.empleadoId === id)}
       primerMovimiento={id ? fechaPrimerMovimiento(id, permisos, aumentos) : undefined}
+      salarioGuardado={existente?.salarioInicial}
     />
   )
 }
@@ -37,9 +39,10 @@ type PropsFormulario = {
   inicial: FormEmpleado
   salarioBloqueado: boolean
   primerMovimiento?: string
+  salarioGuardado?: number
 }
 
-function Formulario({ id, inicial, salarioBloqueado, primerMovimiento }: PropsFormulario) {
+function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGuardado }: PropsFormulario) {
   const navigate = useNavigate()
   const [form, setForm] = useState(inicial)
   const [errores, setErrores] = useState<Errores<CampoEmpleado>>({})
@@ -53,7 +56,7 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento }: PropsFo
 
   function guardar(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const nuevosErrores = validarEmpleado(form, { primerMovimiento })
+    const nuevosErrores = validarEmpleado(form, { primerMovimiento, salarioGuardado })
     setErrores(nuevosErrores)
     const primero = Object.keys(nuevosErrores)[0]
     if (primero) {
@@ -88,14 +91,18 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento }: PropsFo
         />
         <Campo
           {...props('salarioInicial')}
-          etiqueta="Salario inicial (MXN)"
+          etiqueta="Salario mensual inicial (MXN)"
           obligatorio
           type="number"
           inputMode="decimal"
           step="0.01"
-          min="0"
+          min={SALARIO_MINIMO_MENSUAL}
           readOnly={salarioBloqueado}
-          ayuda={salarioBloqueado ? 'Ya tiene aumentos registrados; el salario cambia mediante un nuevo aumento.' : undefined}
+          ayuda={
+            salarioBloqueado
+              ? 'Ya tiene aumentos registrados; el salario cambia mediante un nuevo aumento.'
+              : AYUDA_SALARIO_MINIMO
+          }
         />
         <Campo {...props('email')} etiqueta="Correo electrónico" type="email" autoComplete="email" />
         <Campo {...props('telefono')} etiqueta="Teléfono" type="tel" autoComplete="tel" />

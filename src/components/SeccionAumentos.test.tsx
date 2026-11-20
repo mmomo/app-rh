@@ -50,6 +50,6 @@ describe('aumentos salariales (A3, R2b)', () => {
     expect(within(screen.getByRole('table')).getByText('$11,500.00')).toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'Editar a Ana López' }))
-    expect(screen.getByLabelText(/^Salario inicial/)).toHaveAttribute('readonly')
+    expect(screen.getByLabelText(/^Salario mensual inicial/)).toHaveAttribute('readonly')
   })
 })
