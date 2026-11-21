@@ -4,6 +4,7 @@ import { Campo } from '../components/Campo'
 import { store, useEstado } from '../data/store'
 import {
   datosDesdeForm,
+  exEmpleadoConNss,
   EDAD_MINIMA,
   fechaPrimerMovimiento,
   formDesdeEmpleado,
@@ -61,6 +62,7 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGu
   const navigate = useNavigate()
   const [form, setForm] = useState(inicial)
   const [errores, setErrores] = useState<Errores<CampoEmpleado>>({})
+  const exConNss = exEmpleadoConNss(form.nss, empleados, id)
 
   const props = (campo: CampoEmpleado) => ({
     id: campo,
@@ -110,7 +112,11 @@ function Formulario({ id, inicial, salarioBloqueado, primerMovimiento, salarioGu
           inputMode="numeric"
           maxLength={11}
           autoComplete="off"
-          ayuda="11 dígitos, sin espacios ni guiones."
+          ayuda={
+            exConNss?.baja
+              ? `Este NSS perteneció a ${nombreCompleto(exConNss)} (ex empleado, baja el ${formatearFecha(exConNss.baja.fecha)}); se permite para recontratación.`
+              : '11 dígitos, sin espacios ni guiones.'
+          }
         />
         <Campo {...props('puesto')} etiqueta="Puesto" obligatorio />
         <Campo {...props('departamento')} etiqueta="Departamento" obligatorio />

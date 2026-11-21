@@ -98,7 +98,7 @@ type OpcionesValidacion = {
  * R2b: el salario inicial debe ser mayor a 0.
  * R3: el salario mensual capturado no puede ser menor al mínimo general vigente.
  * R4: a la fecha de ingreso debía tener al menos 18 años.
- * R5: el NSS tiene 11 dígitos y no puede estar asignado a otro empleado.
+ * R5: el NSS tiene 11 dígitos y no puede estar asignado a otro empleado activo (sí a un ex empleado: recontratación).
  * R7: hoy no puede tener más de 100 años de edad ni de antigüedad.
  * R2c: la fecha de ingreso no puede ser futura ni posterior al historial ya registrado.
  */
@@ -135,7 +135,7 @@ export function validarEmpleado(
   }
   if (!errores.nss) {
     const nss = form.nss.trim()
-    const otro = empleados.find((e) => e.nss === nss && e.id !== idActual)
+    const otro = empleados.find((e) => e.nss === nss && e.id !== idActual && !e.baja)
     if (!/^\d{11}$/.test(nss)) errores.nss = 'El NSS debe tener exactamente 11 dígitos.'
     else if (otro) errores.nss = `Este NSS ya está asignado a ${nombreCompleto(otro)}.`
   }
@@ -163,6 +163,12 @@ export function datosDesdeForm(form: FormEmpleado): DatosEmpleado {
     ...(email && { email }),
     ...(telefono && { telefono }),
   }
+}
+
+/** R5 con A8: ex empleado que tuvo este NSS, para informar de una recontratación. */
+export function exEmpleadoConNss(nss: string, empleados: Empleado[], idActual?: string): Empleado | undefined {
+  const limpio = nss.trim()
+  return limpio === '' ? undefined : empleados.find((e) => e.baja && e.nss === limpio && e.id !== idActual)
 }
 
 /** Registros anteriores a v1.2 pueden no tener NSS ni fecha de nacimiento. */

@@ -3,6 +3,7 @@ import {
   calcularEdad,
   datosDesdeForm,
   excesoDeAnios,
+  exEmpleadoConNss,
   fechaPrimerMovimiento,
   formVacio,
   superaLimiteAnios,
@@ -120,6 +121,14 @@ describe('validarEmpleado (R5)', () => {
 
   it('al editar, el propio NSS no cuenta como repetido', () => {
     expect(validarEmpleado(formValido, { empleados: [ana], idActual: 'e1' })).toEqual({})
+  })
+
+  it('A8: el NSS de un ex empleado se permite (recontratación) y se identifica a quién perteneció', () => {
+    const exAna = { ...ana, baja: { fecha: '2025-01-31', motivo: 'RENUNCIA' as const } }
+    expect(validarEmpleado(formValido, { empleados: [exAna] })).toEqual({})
+    expect(exEmpleadoConNss(' 12345678901 ', [exAna])).toBe(exAna)
+    expect(exEmpleadoConNss('12345678901', [ana])).toBeUndefined()
+    expect(exEmpleadoConNss('12345678901', [exAna], exAna.id)).toBeUndefined()
   })
 
   it('caso de prueba: NSS de 10 dígitos → bloqueado; también letras, guiones o 12 dígitos', () => {

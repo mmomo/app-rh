@@ -190,6 +190,31 @@ describe('baja de empleados (A8, R8)', () => {
   })
 })
 
+describe('NSS único entre activos (R5 con A8)', () => {
+  it('se puede dar de alta de nuevo a un ex empleado con su NSS y se informa a quién perteneció', async () => {
+    const ana = store.crearEmpleado({
+      nombre: 'Ana', apellidos: 'López', puesto: 'Dev', departamento: 'TI',
+      fechaIngreso: '2021-01-01', salarioInicial: 20000, nss: '12345678901', fechaNacimiento: '1990-05-20',
+    })
+    store.darDeBaja(ana.id, { fecha: '2023-07-15', motivo: 'RENUNCIA' })
+    const { user } = renderApp('/empleados/nuevo')
+    await user.type(screen.getByLabelText(/^Nombre/), 'Ana')
+    await user.type(screen.getByLabelText(/^Apellidos/), 'López')
+    await user.type(screen.getByLabelText(/^Fecha de nacimiento/), '1990-05-20')
+    await user.type(screen.getByLabelText(/^Número de Seguridad Social/), '12345678901')
+    expect(screen.getByLabelText(/^Número de Seguridad Social/)).toHaveAccessibleDescription(
+      'Este NSS perteneció a Ana López (ex empleado, baja el 15/07/2023); se permite para recontratación.',
+    )
+    await user.type(screen.getByLabelText(/^Puesto/), 'Líder técnica')
+    await user.type(screen.getByLabelText(/^Departamento/), 'TI')
+    await user.type(screen.getByLabelText(/^Fecha de ingreso/), '2025-02-01')
+    await user.type(screen.getByLabelText(/^Salario mensual inicial/), '30000')
+    await user.click(screen.getByRole('button', { name: 'Guardar' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Ana López')
+    expect(store.getEstado().empleados.filter((e) => e.nss === '12345678901')).toHaveLength(2)
+  })
+})
+
 describe('ex empleados (A8)', () => {
   function altaConBaja() {
     const base = { puesto: 'Dev', departamento: 'TI', fechaIngreso: '2021-01-01', salarioInicial: 20000 }
