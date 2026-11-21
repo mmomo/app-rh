@@ -97,3 +97,6 @@ Plan aprobado el 2026-11-21 ("Apruebo"). Desde esta iteración, cada despliegue 
 - La pantalla de baja limita la fecha (`min`/`max`) y explica el rango permitido debajo del campo.
 - Si se entra por URL a `/editar` o `/baja` de un ex empleado, se muestra un aviso con enlace al expediente.
 - `store.actualizarEmpleado` conserva la baja aunque se llame sobre un ex empleado.
+
+## 9. Operations
+✅ Desplegado y verificado en producción el 2026-11-21, con capturas de escritorio y móvil (ver `docs/evidencias/iteracion-6-produccion.md`).
