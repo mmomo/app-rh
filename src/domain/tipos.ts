@@ -13,9 +13,20 @@ export type Empleado = {
   nss?: string
   email?: string
   telefono?: string
+  /** A8: si existe, es ex empleado (la baja es definitiva). */
+  baja?: Baja
 }
 
-export type DatosEmpleado = Omit<Empleado, 'id'>
+export type MotivoBaja = 'RENUNCIA' | 'DESPIDO' | 'FIN_CONTRATO' | 'JUBILACION' | 'OTRO'
+
+export type Baja = {
+  /** ISO 'yyyy-mm-dd' */
+  fecha: string
+  motivo: MotivoBaja
+  comentario?: string
+}
+
+export type DatosEmpleado = Omit<Empleado, 'id' | 'baja'>
 
 export type TipoPermiso = 'CON_GOCE' | 'SIN_GOCE' | 'VACACIONES'
 

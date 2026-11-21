@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import type { Aumento, DatosEmpleado, Empleado, Permiso } from '../domain/tipos'
+import type { Aumento, Baja, DatosEmpleado, Empleado, Permiso } from '../domain/tipos'
 import { almacenamientoLocal, type Almacenamiento, type Estado } from './almacenamiento'
 import { agregarEjemplos, esEjemplo } from './ejemplos'
 
@@ -47,7 +47,14 @@ export function crearStore(almacenamiento: Almacenamiento, { conEjemplos = false
     actualizarEmpleado(id: string, datos: DatosEmpleado) {
       actualizar((e) => ({
         ...e,
-        empleados: e.empleados.map((emp) => (emp.id === id ? { id, ...datos } : emp)),
+        empleados: e.empleados.map((emp) => (emp.id === id ? { id, ...datos, ...(emp.baja && { baja: emp.baja }) } : emp)),
+      }))
+    },
+    /** A8: el empleado pasa a ex empleado; su registro e historial se conservan. */
+    darDeBaja(id: string, baja: Baja) {
+      actualizar((e) => ({
+        ...e,
+        empleados: e.empleados.map((emp) => (emp.id === id ? { ...emp, baja } : emp)),
       }))
     },
     crearAumento(datos: Omit<Aumento, 'id'>): Aumento {
