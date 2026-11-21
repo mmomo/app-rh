@@ -1,6 +1,6 @@
 # Inception — Iteración 6: baja de empleados
 
-> Estado: **BORRADOR — pendiente de aprobación**
+> Estado: **APROBADO** (2026-11-21)
 > Fecha: 2026-11-21
 > Fuente: `docs/requerimientos.md` v1.6 (A8, R8; cambios en A1 y R5)
 
@@ -78,7 +78,7 @@ Los datos guardados no requieren migración: los registros sin `baja` son emplea
 - La baja no puede ser anterior al último aumento ni al fin del último permiso. Si tiene vacaciones futuras registradas, no se puede dar de baja antes de que terminen.
 - La antigüedad de un ex empleado se congela en la fecha de baja; los avisos de R7 y de datos incompletos solo se muestran a activos.
 
-## 6. Plan de Construction (un commit por requerimiento)
+## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-21
 1. **A8 — dominio y store:**
    - tipo `Baja`, `validarBaja` (R8), `esActivo`, y antigüedad a la fecha de baja;
    - `store.darDeBaja`; se quita `eliminarEmpleado`;
@@ -90,4 +90,10 @@ Los datos guardados no requieren migración: los registros sin `baja` son emplea
 **Operations:** push a `main` (CI y despliegue automático), verificación en producción y Lighthouse Accesibilidad ≥ 90 en lista, formulario de baja y detalle de ex empleado.
 
 ## 7. Aprobación
-Pendiente.
+Plan aprobado el 2026-11-21 ("Apruebo"). Desde esta iteración, cada despliegue incluye capturas de pantalla de producción (`docs/evidencias/capturas/`).
+
+## 8. Decisiones tomadas durante Construction
+- `eliminarEmpleado` se quitó del store en el commit de la interfaz (paso 2), junto con los botones que lo usaban, para que cada commit compile.
+- La pantalla de baja limita la fecha (`min`/`max`) y explica el rango permitido debajo del campo.
+- Si se entra por URL a `/editar` o `/baja` de un ex empleado, se muestra un aviso con enlace al expediente.
+- `store.actualizarEmpleado` conserva la baja aunque se llame sobre un ex empleado.
