@@ -7,11 +7,16 @@ import { historialSalarial, validarAumento, type CampoAumento, type FormAumento 
 import type { Aumento, Empleado, Errores } from '../domain/tipos'
 import { Campo } from './Campo'
 
-type Props = { empleado: Empleado; aumentos: Aumento[] }
+type Props = {
+  empleado: Empleado
+  aumentos: Aumento[]
+  /** A8: los ex empleados solo se consultan; se oculta el formulario de registro. */
+  soloConsulta?: boolean
+}
 
 const formInicial = (): FormAumento => ({ fecha: hoyISO(), salarioNuevo: '', motivo: '' })
 
-export function SeccionAumentos({ empleado, aumentos }: Props) {
+export function SeccionAumentos({ empleado, aumentos, soloConsulta = false }: Props) {
   const [form, setForm] = useState(formInicial)
   const [errores, setErrores] = useState<Errores<CampoAumento>>({})
   const [aviso, setAviso] = useState('')
@@ -49,35 +54,39 @@ export function SeccionAumentos({ empleado, aumentos }: Props) {
     <section aria-labelledby="titulo-aumentos" className="seccion">
       <h2 id="titulo-aumentos">Aumentos salariales</h2>
 
-      <form noValidate onSubmit={registrar} className="formulario formulario--linea" aria-label="Registrar aumento">
-        <Campo
-          {...props('fecha')}
-          etiqueta="Fecha del aumento"
-          obligatorio
-          type="date"
-          min={empleado.fechaIngreso}
-          max={hoyISO()}
-        />
-        <Campo
-          {...props('salarioNuevo')}
-          etiqueta="Nuevo salario mensual (MXN)"
-          obligatorio
-          type="number"
-          inputMode="decimal"
-          step="0.01"
-          min={SALARIO_MINIMO_MENSUAL}
-          ayuda={AYUDA_SALARIO_MINIMO}
-        />
-        <Campo {...props('motivo')} etiqueta="Motivo del aumento" />
-        <div className="acciones-formulario">
-          <button type="submit" className="boton boton--primario">
-            Registrar aumento
-          </button>
-        </div>
-      </form>
-      <p role="status" className="aviso">
-        {aviso}
-      </p>
+      {!soloConsulta && (
+        <>
+          <form noValidate onSubmit={registrar} className="formulario formulario--linea" aria-label="Registrar aumento">
+            <Campo
+              {...props('fecha')}
+              etiqueta="Fecha del aumento"
+              obligatorio
+              type="date"
+              min={empleado.fechaIngreso}
+              max={hoyISO()}
+            />
+            <Campo
+              {...props('salarioNuevo')}
+              etiqueta="Nuevo salario mensual (MXN)"
+              obligatorio
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min={SALARIO_MINIMO_MENSUAL}
+              ayuda={AYUDA_SALARIO_MINIMO}
+            />
+            <Campo {...props('motivo')} etiqueta="Motivo del aumento" />
+            <div className="acciones-formulario">
+              <button type="submit" className="boton boton--primario">
+                Registrar aumento
+              </button>
+            </div>
+          </form>
+          <p role="status" className="aviso">
+            {aviso}
+          </p>
+        </>
+      )}
 
       <div className="tabla-contenedor">
         <table>

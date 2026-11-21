@@ -55,9 +55,28 @@ describe('accesibilidad (A5)', () => {
     expect(await violaciones()).toEqual([])
   })
 
+  it('formulario de baja con errores y detalle de ex empleado (A8)', async () => {
+    const ana = altaConHistorial()
+    const { user, unmount } = renderApp(`/empleados/${ana.id}/baja`)
+    await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
+    expect(await violaciones()).toEqual([])
+    unmount()
+    store.darDeBaja(ana.id, { fecha: '2025-12-01', motivo: 'RENUNCIA' })
+    renderApp(`/empleados/${ana.id}`)
+    expect(await violaciones()).toEqual([])
+  })
+
+  it('lista con filtro y ex empleados (A8)', async () => {
+    const ana = altaConHistorial()
+    store.darDeBaja(ana.id, { fecha: '2025-12-01', motivo: 'RENUNCIA' })
+    const { user } = renderApp('/empleados')
+    await user.click(screen.getByRole('radio', { name: /^Todos/ }))
+    expect(await violaciones()).toEqual([])
+  })
+
   it('todos los campos tienen una etiqueta visible asociada', () => {
     const ana = altaConHistorial()
-    for (const ruta of ['/empleados', '/empleados/nuevo', `/empleados/${ana.id}`]) {
+    for (const ruta of ['/empleados', '/empleados/nuevo', `/empleados/${ana.id}`, `/empleados/${ana.id}/baja`]) {
       const { unmount } = renderApp(ruta)
       for (const input of document.querySelectorAll('input')) {
         expect(input.labels?.length, `#${input.id} en ${ruta}`).toBeGreaterThan(0)

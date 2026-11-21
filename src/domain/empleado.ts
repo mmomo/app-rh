@@ -170,8 +170,9 @@ export function datosIncompletos(e: Empleado): boolean {
   return !e.nss || !e.fechaNacimiento
 }
 
-/** R7: años de edad o de antigüedad que rebasan el máximo con el paso del tiempo (vacío si cumple). */
+/** R7: años de edad o de antigüedad que rebasan el máximo con el paso del tiempo (vacío si cumple o es ex empleado). */
 export function excesoDeAnios(e: Empleado, hoy: string = hoyISO()): { edad?: number; antiguedad?: number } {
+  if (e.baja) return {}
   const edad = e.fechaNacimiento ? calcularEdad(e.fechaNacimiento, hoy) : 0
   const antiguedad = calcularAntiguedad(e.fechaIngreso, hoy).anios
   return {

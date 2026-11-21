@@ -8,11 +8,12 @@ import {
   fechaPrimerMovimiento,
   formDesdeEmpleado,
   formVacio,
+  nombreCompleto,
   validarEmpleado,
   type CampoEmpleado,
   type FormEmpleado,
 } from '../domain/empleado'
-import { hoyISO } from '../domain/fechas'
+import { formatearFecha, hoyISO } from '../domain/fechas'
 import { AYUDA_SALARIO_MINIMO, SALARIO_MINIMO_MENSUAL } from '../domain/salarioMinimo'
 import type { Empleado, Errores } from '../domain/tipos'
 import { NoEncontrado } from './NoEncontrado'
@@ -23,6 +24,17 @@ export function FormularioEmpleado() {
   const existente = id ? empleados.find((e) => e.id === id) : undefined
 
   if (id && !existente) return <NoEncontrado />
+  if (existente?.baja) {
+    return (
+      <section>
+        <h1>Editar empleado</h1>
+        <p className="alerta">
+          {nombreCompleto(existente)} es ex empleado (baja el {formatearFecha(existente.baja.fecha)}); su expediente es de
+          solo consulta y no se puede editar. <Link to={`/empleados/${existente.id}`}>Ver expediente</Link>
+        </p>
+      </section>
+    )
+  }
   return (
     <Formulario
       key={id ?? 'nuevo'}

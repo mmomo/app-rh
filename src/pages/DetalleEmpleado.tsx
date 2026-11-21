@@ -4,7 +4,8 @@ import { SeccionPermisos } from '../components/SeccionPermisos'
 import { SeccionVacaciones } from '../components/SeccionVacaciones'
 import { esEjemplo } from '../data/ejemplos'
 import { useEstado } from '../data/store'
-import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
+import { formatearAntiguedad } from '../domain/antiguedad'
+import { antiguedadDe, ETIQUETA_MOTIVO_BAJA } from '../domain/baja'
 import { calcularEdad, datosIncompletos, EDAD_MAXIMA, excesoDeAnios, nombreCompleto } from '../domain/empleado'
 import { formatearFecha } from '../domain/fechas'
 import { formatearMoneda } from '../domain/formato'
@@ -18,6 +19,7 @@ export function DetalleEmpleado() {
 
   if (!empleado) return <NoEncontrado />
   const nombre = nombreCompleto(empleado)
+  const { baja } = empleado
   const exceso = excesoDeAnios(empleado)
   const excesos = [
     exceso.edad && `${exceso.edad} años de edad`,
@@ -33,18 +35,28 @@ export function DetalleEmpleado() {
         <h1>
           {nombre}
           {esEjemplo(empleado.id) && <> <span className="etiqueta">Ejemplo</span></>}
+          {baja && <> <span className="etiqueta etiqueta--ex">Ex empleado</span></>}
         </h1>
-        <div className="acciones">
-          <Link className="boton" to={`/empleados/${empleado.id}/editar`}>
-            Editar
-          </Link>
-          <Link className="boton boton--peligro" to={`/empleados/${empleado.id}/baja`}>
-            Dar de baja
-          </Link>
-        </div>
+        {!baja && (
+          <div className="acciones">
+            <Link className="boton" to={`/empleados/${empleado.id}/editar`}>
+              Editar
+            </Link>
+            <Link className="boton boton--peligro" to={`/empleados/${empleado.id}/baja`}>
+              Dar de baja
+            </Link>
+          </div>
+        )}
       </div>
 
-      {datosIncompletos(empleado) && (
+      {baja && (
+        <p className="baja">
+          <strong>Dado de baja el {formatearFecha(baja.fecha)}</strong> · Motivo: {ETIQUETA_MOTIVO_BAJA[baja.motivo]}
+          {baja.comentario && <> · {baja.comentario}</>}. Expediente de solo consulta.
+        </p>
+      )}
+
+      {!baja && datosIncompletos(empleado) && (
         <p className="alerta">
           <strong>Datos incompletos:</strong> falta registrar el NSS o la fecha de nacimiento.{' '}
           <Link to={`/empleados/${empleado.id}/editar`}>Completar datos</Link>
@@ -73,9 +85,9 @@ export function DetalleEmpleado() {
         <dd>{empleado.departamento}</dd>
         <dt>Fecha de ingreso</dt>
         <dd>{formatearFecha(empleado.fechaIngreso)}</dd>
-        <dt>Antigüedad</dt>
-        <dd>{formatearAntiguedad(calcularAntiguedad(empleado.fechaIngreso))}</dd>
-        <dt>Salario vigente</dt>
+        <dt>{baja ? 'Antigüedad al darse de baja' : 'Antigüedad'}</dt>
+        <dd>{formatearAntiguedad(antiguedadDe(empleado))}</dd>
+        <dt>{baja ? 'Último salario' : 'Salario vigente'}</dt>
         <dd className="destacado">{formatearMoneda(salarioVigente(empleado, aumentos))}</dd>
         <dt>Correo electrónico</dt>
         <dd>{empleado.email ?? '—'}</dd>
@@ -83,9 +95,9 @@ export function DetalleEmpleado() {
         <dd>{empleado.telefono ?? '—'}</dd>
       </dl>
 
-      <SeccionVacaciones empleado={empleado} permisos={permisos} />
-      <SeccionAumentos empleado={empleado} aumentos={aumentos} />
-      <SeccionPermisos empleado={empleado} permisos={permisos} />
+      {!baja && <SeccionVacaciones empleado={empleado} permisos={permisos} />}
+      <SeccionAumentos empleado={empleado} aumentos={aumentos} soloConsulta={!!baja} />
+      <SeccionPermisos empleado={empleado} permisos={permisos} soloConsulta={!!baja} />
     </section>
   )
 }

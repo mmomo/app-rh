@@ -164,6 +164,10 @@ describe('excesoDeAnios (R7)', () => {
     expect(excesoDeAnios(base, '2026-11-21')).toEqual({ edad: 101 })
   })
 
+  it('no aplica a ex empleados (A8)', () => {
+    expect(excesoDeAnios({ ...base, baja: { fecha: '1990-01-01', motivo: 'JUBILACION' } }, '2030-01-01')).toEqual({})
+  })
+
   it('detecta la antigüedad aunque falte la fecha de nacimiento', () => {
     expect(excesoDeAnios({ ...base, fechaNacimiento: undefined, fechaIngreso: '1925-01-01' }, '2026-11-20')).toEqual({ antiguedad: 101 })
   })

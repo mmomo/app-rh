@@ -57,7 +57,10 @@ h2 { font-size: 1.2rem; margin: 24px 0 12px; }
 .campo--error input, .campo--error select, .campo--error textarea { border: 2px solid var(--danger); }
 .campo-error { color: var(--danger); margin: 0; font-weight: 600; }
 .campo-ayuda { margin: 0; font-size: 0.9rem; }
-.campo--busqueda { max-width: 360px; margin-bottom: 16px; }
+.campo--busqueda { max-width: 360px; margin-bottom: 0; flex: 1 1 240px; }
+.filtros { display: flex; flex-wrap: wrap; align-items: end; gap: 12px 24px; margin-bottom: 16px; }
+.grupo-opciones--linea { display: flex; flex-wrap: wrap; column-gap: 16px; }
+.grupo-opciones--linea legend { width: 100%; }
 .acciones, .acciones-formulario { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .tabla-contenedor { position: relative; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
@@ -105,6 +108,11 @@ td .etiqueta { margin-left: 0; }
 .etiqueta--sin-goce { background: #fbe9d8; color: #8a4500; }
 
 .etiqueta--aviso { background: #fbe9d8; color: #8a4500; }
+.etiqueta--ex { background: #e8e8ec; color: #3d3d47; }
+.baja {
+  background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--muted);
+  border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px;
+}
 .alerta {
   background: #fff4e5; border: 1px solid #e0a35c; border-left-width: 4px;
   border-radius: var(--radius); padding: 10px 14px; margin: 0 0 16px;

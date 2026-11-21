@@ -44,6 +44,12 @@ describe('CRUD de empleados (A1)', () => {
     await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Ana López')
     expect(localStorage.getItem('app-rh:datos:v1')).toContain('"baja":{"fecha":"2026-11-20","motivo":"RENUNCIA"}')
+
+    // Sale de Activos y queda en Ex empleados
+    await user.click(screen.getByRole('link', { name: 'Control de RR. HH.' }))
+    expect(screen.getByText('No hay empleados activos.')).toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'Ex empleados (1)' }))
+    expect(within(screen.getByRole('table')).getByText('Ex empleado')).toBeInTheDocument()
   })
 
   it('filtra la lista por nombre', async () => {
@@ -181,6 +187,63 @@ describe('baja de empleados (A8, R8)', () => {
     await user.click(screen.getByRole('link', { name: 'Cancelar' }))
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Luis Pérez')
     expect(store.getEstado().empleados[0].baja).toBeUndefined()
+  })
+})
+
+describe('ex empleados (A8)', () => {
+  function altaConBaja() {
+    const base = { puesto: 'Dev', departamento: 'TI', fechaIngreso: '2021-01-01', salarioInicial: 20000 }
+    store.crearEmpleado({ nombre: 'Ana', apellidos: 'López', ...base, nss: '12345678901', fechaNacimiento: '1990-05-20' })
+    const luis = store.crearEmpleado({ nombre: 'Luis', apellidos: 'Pérez', ...base })
+    store.crearAumento({ empleadoId: luis.id, fecha: '2022-01-01', salarioNuevo: 22000 })
+    store.darDeBaja(luis.id, { fecha: '2023-07-15', motivo: 'FIN_CONTRATO', comentario: 'Proyecto concluido' })
+    return luis
+  }
+
+  it('la lista muestra Activos por omisión y filtra Ex empleados y Todos, combinable con la búsqueda', async () => {
+    altaConBaja()
+    const { user } = renderApp()
+    const nombres = () => within(screen.getByRole('table')).getAllByRole('link', { name: /^(Ana|Luis)/ }).map((l) => l.textContent)
+    expect(screen.getByRole('radio', { name: 'Activos (1)' })).toBeChecked()
+    expect(nombres()).toEqual(['Ana López'])
+
+    await user.click(screen.getByRole('radio', { name: 'Ex empleados (1)' }))
+    expect(nombres()).toEqual(['Luis Pérez'])
+    const fila = screen.getByRole('link', { name: 'Luis Pérez' }).closest('tr')!
+    expect(within(fila).getByText('Ex empleado')).toBeInTheDocument()
+    expect(within(fila).getByText('2 años 6 meses')).toBeInTheDocument()
+    expect(within(fila).getByRole('link', { name: 'Ver a Luis Pérez' })).toBeInTheDocument()
+    expect(within(fila).queryByRole('link', { name: /Editar|Dar de baja/ })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('radio', { name: 'Todos (2)' }))
+    await user.type(screen.getByLabelText('Buscar por nombre'), 'luis')
+    expect(nombres()).toEqual(['Luis Pérez'])
+  })
+
+  it('el detalle es de solo consulta: muestra la baja e historial, sin editar, registrar ni vacaciones', async () => {
+    const luis = altaConBaja()
+    renderApp(`/empleados/${luis.id}`)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Luis Pérez Ex empleado')
+    expect(screen.getByText(/Dado de baja el 15\/07\/2023/).parentElement).toHaveTextContent(
+      'Motivo: Término de contrato · Proyecto concluido',
+    )
+    expect(screen.getByText('Antigüedad al darse de baja').nextSibling).toHaveTextContent('2 años 6 meses')
+    expect(screen.getByText('Último salario').nextSibling).toHaveTextContent('$22,000.00')
+    expect(screen.getByRole('table', { name: 'Historial salarial' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: /Editar|Dar de baja/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('form')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Vacaciones' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/Datos incompletos/)).not.toBeInTheDocument()
+  })
+
+  it('no se puede editar ni volver a dar de baja desde la URL', () => {
+    const luis = altaConBaja()
+    const { unmount } = renderApp(`/empleados/${luis.id}/editar`)
+    expect(screen.getByText(/es ex empleado \(baja el 15\/07\/2023\)/)).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Guardar' })).not.toBeInTheDocument()
+    unmount()
+    renderApp(`/empleados/${luis.id}/baja`)
+    expect(screen.getByText(/Ya fue dado de baja el 15\/07\/2023/)).toBeInTheDocument()
   })
 })
 
