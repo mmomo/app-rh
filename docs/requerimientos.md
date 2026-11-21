@@ -1,6 +1,6 @@
 # Requerimientos: Sistema de Control de RR. HH.
 
-> Versión: 1.5
+> Versión: 1.6
 
 ## 1. Contexto
 App para administrar la información del personal de una organización, que facilite la gestión de empleados y diversos procesos relacionados con recursos humanos.
@@ -9,7 +9,7 @@ App para administrar la información del personal de una organización, que faci
 ## 2. Atributos
 | ID | Atributo | Descripción | Criterio de aceptación | Origen |
 |---|---|---|---|---|
-| A1 | CRUD de empleados | Registrar, consultar, modificar y eliminar empleados. | Se crea un empleado, aparece en la lista, se edita y se elimina, y cada cambio se refleja. | Instrucciones del reto |
+| A1 | CRUD de empleados | Registrar, consultar, modificar y dar de baja empleados (desde v1.6 ya no se eliminan; ver A8). | Se crea un empleado, aparece en la lista, se edita y se da de baja, y cada cambio se refleja. | Instrucciones del reto |
 | A2 | Permisos | Registrar permisos con goce y sin goce de sueldo por empleado. | Un permiso de cada tipo queda en el historial del empleado con su tipo visible. | Instrucciones del reto |
 | A3 | Aumentos salariales | Registrar aumentos; el salario vigente se actualiza solo. | Salario $10,000 + aumento a $11,500 → el detalle muestra $11,500 vigente y el historial ambos. | Instrucciones del reto |
 | A4 | Antigüedad | Calcular y mostrar la antigüedad desde la fecha de ingreso. | Ingreso 15/03/2020, hoy 19/11/2026 → "6 años 8 meses". | Instrucciones del reto |
@@ -17,6 +17,7 @@ App para administrar la información del personal de una organización, que faci
 
 | A6 | Vacaciones | Mostrar los días de vacaciones que corresponden a cada empleado según la LFT art. 76, cuántos ha usado y cuántos le quedan en el periodo vacacional vigente (del último aniversario de ingreso al siguiente; sin acumular periodos anteriores). Las vacaciones se registran como un tipo de permiso y se cuentan en días laborables de lunes a viernes. | Ingreso 15/03/2020, hoy 20/11/2026 → corresponden 22; vacaciones del lunes 30/11/2026 al domingo 06/12/2026 → usados 5, restantes 17. | Cliente (iteración 3) |
 | A7 | Empleados de ejemplo | Dos empleados ficticios siempre presentes como ejemplo: se agregan al cargar la app si faltan (también a quien ya tiene datos), se pueden editar y no se pueden eliminar. Cumplen todas las reglas (R1–R6). | Navegador sin datos → la lista muestra a María Fernanda González Ruiz y Carlos Alberto Méndez Torres con la etiqueta "Ejemplo" y sin botón Eliminar. | Cliente (iteración 4) |
+| A8 | Baja de empleados | En lugar de eliminar, un empleado se da de baja con fecha y motivo (renuncia, despido, término de contrato, jubilación u otro) y comentario opcional. La baja es definitiva: el registro se conserva como **ex empleado**, de solo consulta, con su historial y su antigüedad calculada hasta la fecha de baja. La lista filtra Activos / Ex empleados / Todos (por omisión, Activos). | Dar de baja a Ana el 20/11/2026 por renuncia → desaparece de Activos, aparece en Ex empleados con la etiqueta "Ex empleado", su detalle muestra la baja y no tiene botones de editar ni de registrar permisos o aumentos. | Cliente (iteración 6) |
 
 ## 3. Restricciones
 | ID | Restricción | Regla (Dado / Cuando / Entonces) | Caso de prueba | Origen |
@@ -27,10 +28,11 @@ App para administrar la información del personal de una organización, que faci
 | R2c | Fechas vs. ingreso | Dada una fecha de ingreso, cuando es posterior a hoy, entonces se rechaza; dado un permiso o aumento, cuando su fecha es anterior a la fecha de ingreso, entonces se rechaza. | Ingreso 15/03/2020, permiso con inicio 01/01/2020 → bloqueado. | Instrucciones del reto |
 | R3 | Salario mínimo | Los salarios se capturan **mensuales**. Dado un salario inicial o un aumento, cuando el monto es menor al salario mínimo general mensual vigente (2026: $315.04 diarios × 365/12 = **$9,582.47**), entonces se rechaza. | Salario inicial $9,000 → bloqueado; $9,582.47 → aceptado. | Cliente (iteración 2) |
 | R4 | Edad mínima legal | Dado el alta o edición de un empleado, cuando a su **fecha de ingreso** tiene menos de 18 años según su fecha de nacimiento (obligatoria), entonces no se guarda y se marca el campo. | Nacimiento 20/05/2005, ingreso 19/05/2023 → bloqueado; ingreso 20/05/2023 → aceptado. | Cliente (iteración 2) |
-| R5 | NSS único | El NSS es obligatorio y tiene exactamente 11 dígitos. Dado el alta o edición de un empleado, cuando su NSS ya está asignado a otro empleado, entonces no se guarda y se marca el campo. | Ana con NSS 12345678901; alta de Luis con 12345678901 → bloqueado; NSS de 10 dígitos → bloqueado. | Cliente (iteración 2) |
+| R5 | NSS único | El NSS es obligatorio y tiene exactamente 11 dígitos. Dado el alta o edición de un empleado, cuando su NSS ya está asignado a otro empleado **activo**, entonces no se guarda y se marca el campo. Si pertenece a un ex empleado (recontratación), se permite y se informa. | Ana con NSS 12345678901; alta de Luis con 12345678901 → bloqueado; NSS de 10 dígitos → bloqueado. | Cliente (iteración 2) |
 
 | R6 | Saldo de vacaciones | Dado el registro de vacaciones, cuando los días laborables (lunes a viernes) exceden el saldo del periodo vacacional en que inician, o el empleado aún no cumple un año de servicio, o el rango no incluye días laborables, entonces se rechaza y se marca el campo. | Le quedan 17 días; vacaciones de 4 semanas (20 días laborables) → bloqueado. Ingreso hace 6 meses → bloqueado. | Cliente (iteración 3) |
 | R7 | Límite de 100 años | Dado el alta o edición de un empleado, cuando su **edad a hoy** o su **antigüedad a hoy** es mayor a 100 años cumplidos, entonces no se guarda y se marca el campo. Los empleados guardados que rebasan el límite con el tiempo se muestran con un aviso. | Hoy 20/11/2026: nacimiento 21/11/1925 (100 años) → aceptado; 20/11/1925 (101 años) → bloqueado. Ingreso 20/11/1925 → bloqueado. | Cliente (iteración 5) |
+| R8 | Baja consistente | Dada la baja de un empleado, cuando falta la fecha o el motivo, o la fecha es futura, anterior a la de ingreso, anterior a su último aumento o anterior al fin de su último permiso, entonces no se guarda y se marca el campo. | Ingreso 15/03/2020, baja 01/01/2020 → bloqueado; permiso hasta 04/12/2026, baja 21/11/2026 → bloqueado; baja futura → bloqueado. | Cliente (iteración 6) |
 
 ## Historial de cambios
 | Versión | Fecha | Cambio |
@@ -41,3 +43,4 @@ App para administrar la información del personal de una organización, que faci
 | 1.3 | 2026-11-20 | Se agregan A6 (vacaciones disponibles, usadas y restantes) y R6 (saldo de vacaciones). |
 | 1.4 | 2026-11-20 | Se agrega A7 (empleados de ejemplo siempre presentes). |
 | 1.5 | 2026-11-20 | Se agrega R7 (edad y antigüedad máximas de 100 años). |
+| 1.6 | 2026-11-21 | Se agregan A8 (baja de empleados) y R8 (baja consistente); A1 cambia eliminar por dar de baja y R5 aplica solo entre empleados activos. |
