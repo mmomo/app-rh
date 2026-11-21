@@ -1,11 +1,11 @@
 import { screen, within } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { renderApp } from '../test/utils'
 import { EJEMPLOS } from '../data/ejemplos'
 import { store } from '../data/store'
 
 describe('CRUD de empleados (A1)', () => {
-  it('criterio de aceptación: se crea, aparece en la lista, se edita y se elimina', async () => {
+  it('criterio de aceptación: se crea, aparece en la lista, se edita y se da de baja', async () => {
     const { user } = renderApp()
 
     // Crear
@@ -37,23 +37,13 @@ describe('CRUD de empleados (A1)', () => {
     expect(within(screen.getByRole('table')).getByText('Gerente')).toBeInTheDocument()
     expect(screen.queryByText('Analista')).not.toBeInTheDocument()
 
-    // Eliminar
-    vi.spyOn(window, 'confirm').mockReturnValue(true)
-    await user.click(screen.getByRole('button', { name: 'Eliminar a Ana López' }))
-    expect(screen.queryByRole('table')).not.toBeInTheDocument()
-    expect(screen.getByText('Aún no hay empleados registrados.')).toBeInTheDocument()
-    expect(localStorage.getItem('app-rh:datos:v1')).toContain('"empleados":[]')
-  })
-
-  it('no elimina si se cancela la confirmación', async () => {
-    store.crearEmpleado({
-      nombre: 'Luis', apellidos: 'Pérez', puesto: 'Dev', departamento: 'TI',
-      fechaIngreso: '2021-01-01', salarioInicial: 20000,
-    })
-    const { user } = renderApp()
-    vi.spyOn(window, 'confirm').mockReturnValue(false)
-    await user.click(screen.getByRole('button', { name: 'Eliminar a Luis Pérez' }))
-    expect(screen.getByRole('link', { name: 'Luis Pérez' })).toBeInTheDocument()
+    // Dar de baja (A8): ya no se elimina; el registro se conserva
+    await user.click(screen.getByRole('link', { name: 'Dar de baja a Ana López' }))
+    await user.type(screen.getByLabelText(/^Fecha de baja/), '2026-11-20')
+    await user.click(screen.getByRole('radio', { name: 'Renuncia' }))
+    await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Ana López')
+    expect(localStorage.getItem('app-rh:datos:v1')).toContain('"baja":{"fecha":"2026-11-20","motivo":"RENUNCIA"}')
   })
 
   it('filtra la lista por nombre', async () => {
@@ -153,6 +143,47 @@ describe('empleados registrados antes de v1.2', () => {
   })
 })
 
+describe('baja de empleados (A8, R8)', () => {
+  function altaLuis() {
+    return store.crearEmpleado({
+      nombre: 'Luis', apellidos: 'Pérez', puesto: 'Dev', departamento: 'TI',
+      fechaIngreso: '2021-01-01', salarioInicial: 20000, nss: '98765432109', fechaNacimiento: '1990-05-20',
+    })
+  }
+
+  it('no hay opción de eliminar; "Dar de baja" está en la lista y en el detalle', async () => {
+    altaLuis()
+    const { user } = renderApp()
+    expect(screen.queryByRole('button', { name: /Eliminar/ })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('link', { name: 'Luis Pérez' }))
+    await user.click(screen.getByRole('link', { name: 'Dar de baja' }))
+    expect(screen.getByRole('heading', { name: 'Dar de baja a Luis Pérez' })).toBeInTheDocument()
+    expect(screen.getByText(/La baja es definitiva/)).toBeInTheDocument()
+  })
+
+  it('caso de prueba: sin fecha ni motivo o con fecha anterior al ingreso → bloqueado y se marcan los campos', async () => {
+    const luis = altaLuis()
+    const { user } = renderApp(`/empleados/${luis.id}/baja`)
+    await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
+    expect(screen.getByLabelText(/^Fecha de baja/)).toHaveAttribute('aria-invalid', 'true')
+    expect(screen.getByRole('radio', { name: 'Renuncia' })).toHaveAttribute('aria-invalid', 'true')
+
+    await user.type(screen.getByLabelText(/^Fecha de baja/), '2020-01-01')
+    await user.click(screen.getByRole('radio', { name: 'Despido' }))
+    await user.click(screen.getByRole('button', { name: 'Confirmar baja' }))
+    expect(screen.getByText('La baja no puede ser anterior al ingreso (01/01/2021).')).toBeInTheDocument()
+    expect(store.getEstado().empleados[0].baja).toBeUndefined()
+  })
+
+  it('Cancelar vuelve al expediente sin dar de baja', async () => {
+    const luis = altaLuis()
+    const { user } = renderApp(`/empleados/${luis.id}/baja`)
+    await user.click(screen.getByRole('link', { name: 'Cancelar' }))
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Luis Pérez')
+    expect(store.getEstado().empleados[0].baja).toBeUndefined()
+  })
+})
+
 describe('empleados que rebasan 100 años (R7)', () => {
   it('muestran "Supera 100 años" y al editarlos no se guardan hasta corregir la fecha', async () => {
     store.crearEmpleado({
@@ -183,16 +214,15 @@ describe('empleados que rebasan 100 años (R7)', () => {
 })
 
 describe('empleados de ejemplo (A7)', () => {
-  it('se muestran con la etiqueta "Ejemplo", se pueden editar y no tienen botón de eliminar', async () => {
+  it('se muestran con la etiqueta "Ejemplo" y se pueden editar y dar de baja', async () => {
     localStorage.setItem('app-rh:datos:v1', JSON.stringify(EJEMPLOS))
     store.recargar()
     const { user } = renderApp()
     expect(screen.getAllByText('Ejemplo')).toHaveLength(2)
     expect(screen.getByRole('link', { name: 'Editar a María Fernanda González Ruiz' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /^Eliminar a/ })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Dar de baja a María Fernanda González Ruiz' })).toBeInTheDocument()
 
     await user.click(screen.getByRole('link', { name: 'María Fernanda González Ruiz' }))
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('María Fernanda González Ruiz Ejemplo')
-    expect(screen.queryByRole('button', { name: 'Eliminar' })).not.toBeInTheDocument()
   })
 })

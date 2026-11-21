@@ -1,9 +1,9 @@
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { SeccionAumentos } from '../components/SeccionAumentos'
 import { SeccionPermisos } from '../components/SeccionPermisos'
 import { SeccionVacaciones } from '../components/SeccionVacaciones'
 import { esEjemplo } from '../data/ejemplos'
-import { store, useEstado } from '../data/store'
+import { useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { calcularEdad, datosIncompletos, EDAD_MAXIMA, excesoDeAnios, nombreCompleto } from '../domain/empleado'
 import { formatearFecha } from '../domain/fechas'
@@ -13,7 +13,6 @@ import { NoEncontrado } from './NoEncontrado'
 
 export function DetalleEmpleado() {
   const { id } = useParams()
-  const navigate = useNavigate()
   const { empleados, aumentos, permisos } = useEstado()
   const empleado = empleados.find((e) => e.id === id)
 
@@ -24,13 +23,6 @@ export function DetalleEmpleado() {
     exceso.edad && `${exceso.edad} años de edad`,
     exceso.antiguedad && `${exceso.antiguedad} años de antigüedad`,
   ].filter(Boolean)
-
-  function eliminar() {
-    if (window.confirm(`¿Eliminar a ${nombre}? Se borrará también su historial.`)) {
-      store.eliminarEmpleado(empleado!.id)
-      navigate('/empleados')
-    }
-  }
 
   return (
     <section>
@@ -46,11 +38,9 @@ export function DetalleEmpleado() {
           <Link className="boton" to={`/empleados/${empleado.id}/editar`}>
             Editar
           </Link>
-          {!esEjemplo(empleado.id) && (
-            <button type="button" className="boton boton--peligro" onClick={eliminar}>
-              Eliminar
-            </button>
-          )}
+          <Link className="boton boton--peligro" to={`/empleados/${empleado.id}/baja`}>
+            Dar de baja
+          </Link>
         </div>
       </div>
 

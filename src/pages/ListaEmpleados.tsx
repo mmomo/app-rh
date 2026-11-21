@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { esEjemplo } from '../data/ejemplos'
-import { store, useEstado } from '../data/store'
+import { useEstado } from '../data/store'
 import { calcularAntiguedad, formatearAntiguedad } from '../domain/antiguedad'
 import { datosIncompletos, nombreCompleto, superaLimiteAnios } from '../domain/empleado'
 import { formatearMoneda } from '../domain/formato'
@@ -21,12 +21,6 @@ export function ListaEmpleados() {
   function textoVacaciones(e: Empleado) {
     const { corresponden, restantes } = saldoVacaciones(e, permisos)
     return corresponden === 0 ? 'Sin derecho aún' : `${restantes} de ${corresponden}`
-  }
-
-  function eliminar(id: string, nombre: string) {
-    if (window.confirm(`¿Eliminar a ${nombre}? Se borrará también su historial.`)) {
-      store.eliminarEmpleado(id)
-    }
   }
 
   return (
@@ -85,16 +79,9 @@ export function ListaEmpleados() {
                         <Link className="boton" to={`/empleados/${e.id}/editar`} aria-label={`Editar a ${nombre}`}>
                           Editar
                         </Link>
-                        {!esEjemplo(e.id) && (
-                          <button
-                            type="button"
-                            className="boton boton--peligro"
-                            onClick={() => eliminar(e.id, nombre)}
-                            aria-label={`Eliminar a ${nombre}`}
-                          >
-                            Eliminar
-                          </button>
-                        )}
+                        <Link className="boton boton--peligro" to={`/empleados/${e.id}/baja`} aria-label={`Dar de baja a ${nombre}`}>
+                          Dar de baja
+                        </Link>
                       </div>
                     </td>
                   </tr>

@@ -5,7 +5,7 @@ export function NoEncontrado() {
     <section>
       <h1>Empleado no encontrado</h1>
       <p>
-        El registro no existe o fue eliminado. <Link to="/empleados">Volver a la lista</Link>
+        El registro no existe. <Link to="/empleados">Volver a la lista</Link>
       </p>
     </section>
   )

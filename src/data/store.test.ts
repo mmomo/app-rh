@@ -24,7 +24,7 @@ const datos = {
 }
 
 describe('store de empleados (A1)', () => {
-  it('crea, edita y elimina, persistiendo cada cambio', () => {
+  it('crea y edita, persistiendo cada cambio', () => {
     const alm = memoria()
     const s = crearStore(alm)
 
@@ -33,20 +33,6 @@ describe('store de empleados (A1)', () => {
 
     s.actualizarEmpleado(ana.id, { ...datos, puesto: 'Gerente' })
     expect(alm.guardado.empleados[0].puesto).toBe('Gerente')
-
-    s.eliminarEmpleado(ana.id)
-    expect(alm.guardado.empleados).toEqual([])
-  })
-
-  it('al eliminar un empleado borra su historial', () => {
-    const alm = memoria({
-      empleados: [{ id: 'e1', ...datos }],
-      permisos: [{ id: 'p1', empleadoId: 'e1', tipo: 'CON_GOCE', fechaInicio: '2024-01-01', fechaFin: '2024-01-02' }],
-      aumentos: [{ id: 'a1', empleadoId: 'e1', fecha: '2024-01-01', salarioNuevo: 11000 }],
-    })
-    const s = crearStore(alm)
-    s.eliminarEmpleado('e1')
-    expect(alm.guardado).toEqual(estadoVacio)
   })
 
   it('da de baja conservando el registro y su historial (A8); editar no quita la baja', () => {

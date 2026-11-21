@@ -82,12 +82,20 @@ describe('store con ejemplos', () => {
     return { guardado: inicial, cargar() { return this.guardado }, guardar(e) { this.guardado = e } }
   }
 
-  it('los carga y persiste al iniciar, y no permite eliminarlos', () => {
+  it('los carga y persiste al iniciar', () => {
     const alm = memoria()
-    const s = crearStore(alm, { conEjemplos: true })
+    crearStore(alm, { conEjemplos: true })
     expect(alm.guardado.empleados).toHaveLength(2)
     expect(esEjemplo('ejemplo-maria')).toBe(true)
-    s.eliminarEmpleado('ejemplo-maria')
-    expect(s.getEstado().empleados).toHaveLength(2)
+  })
+
+  it('un ejemplo dado de baja se conserva como ex empleado y no se vuelve a agregar (A8)', () => {
+    const alm = memoria()
+    crearStore(alm, { conEjemplos: true }).darDeBaja('ejemplo-carlos', { fecha: '2026-11-20', motivo: 'RENUNCIA' })
+    const s = crearStore(alm, { conEjemplos: true })
+    expect(s.getEstado().empleados.map((e) => [e.id, e.baja?.motivo])).toEqual([
+      ['ejemplo-maria', undefined],
+      ['ejemplo-carlos', 'RENUNCIA'],
+    ])
   })
 })
