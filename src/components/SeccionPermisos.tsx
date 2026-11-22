@@ -26,7 +26,9 @@ const TIPOS = Object.keys(ETIQUETA_TIPO_PERMISO) as TipoPermiso[]
 
 /** Las vacaciones se descuentan en días laborables; los demás permisos se muestran en días naturales. */
 function textoDias(p: Permiso): string {
-  return p.tipo === 'VACACIONES' ? `${diasLaborables(p.fechaInicio, p.fechaFin)} laborables` : String(diasPermiso(p))
+  if (p.tipo !== 'VACACIONES') return String(diasPermiso(p))
+  const dias = diasLaborables(p.fechaInicio, p.fechaFin)
+  return `${dias} ${dias === 1 ? 'laborable' : 'laborables'}`
 }
 
 export function SeccionPermisos({ empleado, permisos, soloConsulta = false }: Props) {

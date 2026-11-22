@@ -70,6 +70,16 @@ describe('panel de resumen (A9)', () => {
     )
   })
 
+  it('vacaciones que cruzan al mes siguiente: un día laborable se escribe en singular', () => {
+    datosCriterio()
+    const ana = store.getEstado().empleados.find((e) => e.nombre === 'Ana')!
+    store.crearPermiso({ empleadoId: ana.id, tipo: 'VACACIONES', fechaInicio: '2026-11-30', fechaFin: '2026-12-06' })
+    renderApp('/panel')
+    const filas = within(screen.getByRole('table', { name: 'Permisos del mes' })).getAllByRole('row')
+    expect(filas.at(-1)).toHaveTextContent('30/11/202606/12/20261 laborable')
+    expect(filas.at(-1)).not.toHaveTextContent('laborables')
+  })
+
   it('sin empleados muestra los estados vacíos', () => {
     renderApp('/panel')
     expect(tarjeta('Plantilla activa')).toHaveTextContent('0Sin cambio vs. octubre')

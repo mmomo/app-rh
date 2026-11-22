@@ -241,7 +241,7 @@ export function Panel() {
                       <td>{formatearFecha(permiso.fechaFin)}</td>
                       <td className="numero">
                         {diasEnMes}
-                        {permiso.tipo === 'VACACIONES' && <span className="nota"> laborables</span>}
+                        {permiso.tipo === 'VACACIONES' && <span className="nota"> {diasEnMes === 1 ? 'laborable' : 'laborables'}</span>}
                       </td>
                     </tr>
                   ))}
