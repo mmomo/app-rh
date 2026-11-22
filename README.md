@@ -4,7 +4,7 @@
 
 **Producción:** https://app-rh-iota.vercel.app
 
-Aplicación web para administrar la información del personal: empleados (con NSS único y edad mínima de 18 años), permisos con y sin goce de sueldo, vacaciones según la LFT (corresponden, usadas y restantes), aumentos salariales mensuales (con salario vigente automático y respeto al salario mínimo), antigüedad y baja de empleados (el expediente se conserva como ex empleado).
+Aplicación web para administrar la información del personal. La pantalla de inicio es un panel de resumen (plantilla activa y su evolución, nómina mensual vigente por departamento y ausencias). Incluye empleados (con NSS único y edad mínima de 18 años), permisos con y sin goce de sueldo, vacaciones según la LFT (corresponden, usadas y restantes), aumentos salariales mensuales (con salario vigente automático y respeto al salario mínimo), antigüedad y baja de empleados (el expediente se conserva como ex empleado).
 
 **Stack:** React 19 + Vite 6 + TypeScript, React Router, Vitest + Testing Library + axe-core. Despliegue en Vercel.
 
@@ -31,7 +31,7 @@ src/
   domain/      Reglas de negocio puras (validaciones, antigüedad, salario vigente) + pruebas
   data/        Store reactivo y almacenamiento en localStorage
   components/  Campo de formulario accesible, secciones de aumentos y permisos
-  pages/       Lista, formulario, detalle y baja de empleado
+  pages/       Panel de resumen; lista, formulario, detalle y baja de empleado
   test/        Configuración y pruebas de accesibilidad
 docs/
   requerimientos.md   Requerimientos con criterios de aceptación (v1.1)
@@ -40,6 +40,7 @@ docs/
   inception-iteracion-3.md  Inception de A6 y R6 (vacaciones)
   inception-iteracion-5.md  Inception de R7 (límite de 100 años)
   inception-iteracion-6.md  Inception de A8 y R8 (baja de empleados)
+  inception-iteracion-7.md  Inception de A9 (panel de resumen de RH)
   evidencias/         Evidencia de verificación de criterios
   prompts.md          Registro de prompts
 ```
@@ -62,6 +63,7 @@ docs/
 | A7 | `data/ejemplos.ts`, carga en `data/store.ts` | `data/ejemplos.test.ts` (incluye que los ejemplos cumplan R1–R7), `pages/empleados.test.tsx` |
 | R7 | `domain/empleado.ts` (`validarEmpleado`, `excesoDeAnios`); avisos en `pages/ListaEmpleados.tsx` y `pages/DetalleEmpleado.tsx` | `domain/empleado.test.ts`, `pages/empleados.test.tsx`, `test/accesibilidad.test.tsx` |
 | A8, R8 | `domain/baja.ts`, `store.darDeBaja`, `pages/FormularioBaja.tsx`; filtro en `pages/ListaEmpleados.tsx`; solo consulta en `pages/DetalleEmpleado.tsx` | `domain/baja.test.ts`, `data/store.test.ts`, `pages/empleados.test.tsx`, `test/accesibilidad.test.tsx` |
+| A9 | `domain/panel.ts`, `pages/Panel.tsx`, `components/GraficaPlantilla.tsx`; ruta de inicio y menú en `App.tsx` | `domain/panel.test.ts`, `pages/Panel.test.tsx`, `pages/navegacion.test.tsx`, `test/accesibilidad.test.tsx` |
 
 ## Mantenimiento anual
 El salario mínimo cambia cada 1 de enero. Actualizar `SALARIO_MINIMO` en `src/domain/salarioMinimo.ts` con el monto diario publicado por CONASAMI en el DOF y ajustar la prueba de `salarioMinimo.test.ts`.

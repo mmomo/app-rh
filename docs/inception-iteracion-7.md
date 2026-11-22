@@ -1,6 +1,6 @@
 # Inception — Iteración 7: panel de resumen de RH
 
-> Estado: **BORRADOR — pendiente de aprobación**
+> Estado: **APROBADO** (2026-11-22)
 > Fecha: 2026-11-22
 > Fuente: `docs/requerimientos.md` v1.7 (A9)
 
@@ -85,7 +85,7 @@ Todas las cifras se calculan con los datos ya registrados; no se agregan campos 
 - **Historial incompleto:** la historia se reconstruye con los registros que existen. Los empleados eliminados antes de v1.6, cuando aún se podía eliminar, no aparecen en la evolución.
 - **Ejemplos:** los dos empleados de ejemplo (A7) cuentan como cualquier otro. Con sus fechas, hoy no hay ausencias de ejemplo, así que esa sección mostrará "Nadie está ausente hoy" hasta que se registre un permiso.
 
-## 6. Plan de Construction (un commit por requerimiento)
+## 6. Plan de Construction (un commit por requerimiento) — ✅ completado 2026-11-22
 1. **A9 — dominio:** `src/domain/panel.ts` con funciones puras:
    - `activosEn`, `salarioEn` y `nominaEn`;
    - `movimientosDelMes` (altas y bajas) y `evolucionPlantilla(12 meses)`;
@@ -105,4 +105,10 @@ Todas las cifras se calculan con los datos ya registrados; no se agregan campos 
 - capturas de escritorio y móvil en `docs/evidencias/capturas/iteracion-7/`.
 
 ## 7. Aprobación
-Pendiente.
+Plan aprobado el 2026-11-22 ("Apruebo, adelante con Construction").
+
+## 8. Decisiones tomadas durante Construction
+- **Gráfica:** una sola serie (activos al cierre), con el mes actual resaltado y su valor rotulado. Cada barra muestra mes, activos, altas y bajas al pasar el cursor. La tabla de 12 meses queda visible debajo y sirve también como alternativa accesible.
+- **Barras de porcentaje:** el desglose por departamento usa una barra proporcional al % del total sobre un fondo gris. En celular se oculta la barra y queda el número, para que la tabla quepa sin desplazamiento.
+- **Revisión visual antes del commit:** con capturas locales se corrigieron la línea inferior de las tablas con encabezado de fila, el tamaño del texto de la gráfica en celular y la redacción "1 de vacaciones".
+- **Estilos compartidos:** las clases de las etiquetas de tipo de permiso se movieron a `components/clasesPermiso.ts` para compartirlas entre el expediente y el panel.
