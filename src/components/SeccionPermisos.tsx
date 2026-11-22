@@ -12,6 +12,7 @@ import {
 import type { Empleado, Errores, Permiso, TipoPermiso } from '../domain/tipos'
 import { diasLaborables } from '../domain/vacaciones'
 import { Campo } from './Campo'
+import { CLASE_TIPO } from './clasesPermiso'
 
 type Props = {
   empleado: Empleado
@@ -22,11 +23,6 @@ type Props = {
 
 const formInicial: FormPermiso = { tipo: '', fechaInicio: '', fechaFin: '', motivo: '' }
 const TIPOS = Object.keys(ETIQUETA_TIPO_PERMISO) as TipoPermiso[]
-const CLASE_TIPO: Record<TipoPermiso, string> = {
-  CON_GOCE: 'etiqueta--con-goce',
-  SIN_GOCE: 'etiqueta--sin-goce',
-  VACACIONES: 'etiqueta--vacaciones',
-}
 
 /** Las vacaciones se descuentan en días laborables; los demás permisos se muestran en días naturales. */
 function textoDias(p: Permiso): string {

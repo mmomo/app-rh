@@ -77,7 +77,11 @@ h2 { font-size: 1.2rem; margin: 24px 0 12px; }
 .tabla-contenedor { position: relative; overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 table { width: 100%; border-collapse: collapse; }
 th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
-tbody tr:last-child td { border-bottom: none; }
+tbody tr:last-child :is(td, th) { border-bottom: none; }
+@media (max-width: 480px) {
+  th, td { padding: 8px; }
+  .tabla--compacta :is(th, td) { font-size: 0.875rem; }
+}
 th { font-size: 0.9rem; color: var(--muted); }
 
 .ficha {
@@ -140,4 +144,37 @@ td .etiqueta { margin-left: 0; }
   .cifras { grid-template-columns: 1fr; gap: 8px; }
   .cifra { display: flex; align-items: baseline; justify-content: space-between; padding: 8px 14px; }
   .cifra dd { font-size: 1.5rem; }
+}
+
+/* A9: panel de resumen */
+h3 { font-size: 1rem; margin: 20px 0 8px; }
+.numero { text-align: right; font-variant-numeric: tabular-nums; }
+th[scope='row'] { font-weight: 600; color: var(--text); font-size: 1rem; }
+.tarjetas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+.tarjeta { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.tarjeta dt { color: var(--muted); font-weight: 600; font-size: 0.9rem; }
+.tarjeta dd { margin: 0; }
+.tarjeta-valor { font-size: 1.75rem; font-weight: 700; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.tarjeta-detalle { color: var(--muted); font-size: 0.9rem; }
+@media (max-width: 640px) {
+  .tarjetas { grid-template-columns: 1fr; gap: 8px; }
+}
+.grafica-contenedor {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 12px 8px 4px; margin-bottom: 12px;
+}
+.grafica { display: block; width: 100%; height: auto; }
+.grafica text { fill: var(--muted); font-size: 12px; }
+.grafica-eje line { stroke: #e3e7ec; stroke-width: 1; }
+.grafica-zona { fill: transparent; }
+.grafica-mes:hover .grafica-zona { fill: rgb(31 95 191 / 0.06); }
+.grafica-barra { fill: #7fa6e0; }
+.grafica-mes--actual .grafica-barra { fill: var(--primary); }
+.grafica .grafica-valor { fill: var(--text); font-weight: 700; }
+.proporcion { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.proporcion-pista { flex: none; width: 100px; height: 8px; border-radius: 4px; background: #e3e7ec; }
+.proporcion-barra { display: block; height: 100%; min-width: 2px; border-radius: 4px; background: var(--primary); }
+@media (max-width: 640px) {
+  .proporcion-pista { display: none; }
+  .grafica text { font-size: 22px; }
 }

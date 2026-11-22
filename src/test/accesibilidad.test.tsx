@@ -2,6 +2,7 @@ import { screen } from '@testing-library/react'
 import axe from 'axe-core'
 import { describe, expect, it } from 'vitest'
 import { store } from '../data/store'
+import { hoyISO } from '../domain/fechas'
 import { renderApp } from './utils'
 
 // A5: complementa la auditoría de Lighthouse (que usa axe-core) en cada pantalla.
@@ -71,6 +72,14 @@ describe('accesibilidad (A5)', () => {
     store.darDeBaja(ana.id, { fecha: '2025-12-01', motivo: 'RENUNCIA' })
     const { user } = renderApp('/empleados')
     await user.click(screen.getByRole('radio', { name: /^Todos/ }))
+    expect(await violaciones()).toEqual([])
+  })
+
+  it('panel de resumen con datos (A9)', async () => {
+    const ana = altaConHistorial()
+    store.crearPermiso({ empleadoId: ana.id, tipo: 'VACACIONES', fechaInicio: hoyISO(), fechaFin: hoyISO() })
+    renderApp('/panel')
+    expect(screen.getByRole('heading', { name: 'Panel de RH' })).toBeInTheDocument()
     expect(await violaciones()).toEqual([])
   })
 
