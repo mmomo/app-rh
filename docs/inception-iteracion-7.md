@@ -112,3 +112,6 @@ Plan aprobado el 2026-11-22 ("Apruebo, adelante con Construction").
 - **Barras de porcentaje:** el desglose por departamento usa una barra proporcional al % del total sobre un fondo gris. En celular se oculta la barra y queda el número, para que la tabla quepa sin desplazamiento.
 - **Revisión visual antes del commit:** con capturas locales se corrigieron la línea inferior de las tablas con encabezado de fila, el tamaño del texto de la gráfica en celular y la redacción "1 de vacaciones".
 - **Estilos compartidos:** las clases de las etiquetas de tipo de permiso se movieron a `components/clasesPermiso.ts` para compartirlas entre el expediente y el panel.
+
+## 9. Operations
+✅ Desplegado y verificado en producción el 2026-11-22, con capturas de escritorio y móvil (ver `docs/evidencias/iteracion-7-produccion.md`).
