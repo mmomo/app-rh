@@ -34,13 +34,14 @@ src/
   pages/       Panel de resumen; lista, formulario, detalle y baja de empleado
   test/        Configuración y pruebas de accesibilidad
 docs/
-  requerimientos.md   Requerimientos con criterios de aceptación (v1.1)
+  requerimientos.md   Requerimientos con criterios de aceptación (v1.7)
   inception.md        Plan, modelo de datos y decisiones (AI-DLC: Inception)
   inception-iteracion-2.md  Inception de R3–R5
   inception-iteracion-3.md  Inception de A6 y R6 (vacaciones)
   inception-iteracion-5.md  Inception de R7 (límite de 100 años)
   inception-iteracion-6.md  Inception de A8 y R8 (baja de empleados)
   inception-iteracion-7.md  Inception de A9 (panel de resumen de RH)
+  evaluacion-requerimientos.md  Evaluación del cumplimiento y recomendaciones
   evidencias/         Evidencia de verificación de criterios
   prompts.md          Registro de prompts
 ```
