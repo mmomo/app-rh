@@ -46,7 +46,7 @@ describe('CRUD de empleados (A1)', () => {
     expect(localStorage.getItem('app-rh:datos:v1')).toContain('"baja":{"fecha":"2026-11-20","motivo":"RENUNCIA"}')
 
     // Sale de Activos y queda en Ex empleados
-    await user.click(screen.getByRole('link', { name: 'Control de RR. HH.' }))
+    await user.click(screen.getByRole('link', { name: 'Empleados' }))
     expect(screen.getByText('No hay empleados activos.')).toBeInTheDocument()
     await user.click(screen.getByRole('radio', { name: 'Ex empleados (1)' }))
     expect(within(screen.getByRole('table')).getByText('Ex empleado')).toBeInTheDocument()
