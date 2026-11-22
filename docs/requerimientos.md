@@ -1,6 +1,6 @@
 # Requerimientos: Sistema de Control de RR. HH.
 
-> Versión: 1.6
+> Versión: 1.7
 
 ## 1. Contexto
 App para administrar la información del personal de una organización, que facilite la gestión de empleados y diversos procesos relacionados con recursos humanos.
@@ -18,6 +18,7 @@ App para administrar la información del personal de una organización, que faci
 | A6 | Vacaciones | Mostrar los días de vacaciones que corresponden a cada empleado según la LFT art. 76, cuántos ha usado y cuántos le quedan en el periodo vacacional vigente (del último aniversario de ingreso al siguiente; sin acumular periodos anteriores). Las vacaciones se registran como un tipo de permiso y se cuentan en días laborables de lunes a viernes. | Ingreso 15/03/2020, hoy 20/11/2026 → corresponden 22; vacaciones del lunes 30/11/2026 al domingo 06/12/2026 → usados 5, restantes 17. | Cliente (iteración 3) |
 | A7 | Empleados de ejemplo | Dos empleados ficticios siempre presentes como ejemplo: se agregan al cargar la app si faltan (también a quien ya tiene datos), se pueden editar y no se pueden eliminar. Cumplen todas las reglas (R1–R6). | Navegador sin datos → la lista muestra a María Fernanda González Ruiz y Carlos Alberto Méndez Torres con la etiqueta "Ejemplo" y sin botón Eliminar. | Cliente (iteración 4) |
 | A8 | Baja de empleados | En lugar de eliminar, un empleado se da de baja con fecha y motivo (renuncia, despido, término de contrato, jubilación u otro) y comentario opcional. La baja es definitiva: el registro se conserva como **ex empleado**, de solo consulta, con su historial y su antigüedad calculada hasta la fecha de baja. La lista filtra Activos / Ex empleados / Todos (por omisión, Activos). | Dar de baja a Ana el 20/11/2026 por renuncia → desaparece de Activos, aparece en Ex empleados con la etiqueta "Ex empleado", su detalle muestra la baja y no tiene botones de editar ni de registrar permisos o aumentos. | Cliente (iteración 6) |
+| A9 | Panel de resumen de RH | Pantalla de inicio con tres indicadores para la toma de decisiones. **Plantilla activa:** activos hoy, altas y bajas del mes en curso, variación contra el cierre del mes anterior y evolución de los últimos 12 meses. **Nómina mensual vigente:** suma de salarios vigentes de los activos, variación contra el cierre del mes anterior, salario promedio y desglose por departamento. **Ausencias:** quién está ausente hoy (permiso de cualquier tipo que incluye hoy) y los permisos que tocan el mes en curso. | Hoy 22/11/2026. Ana (ingreso 15/03/2020, vigente $11,500), Luis (ingreso 03/11/2026, $20,000) y Rosa ($15,000, baja 10/11/2026); permiso con goce de Ana del 20 al 24/11/2026 → activos 2, altas 1, bajas 1, variación 0 vs. octubre; nómina $31,500 (+$5,000, +18.9% vs. octubre); ausente hoy: Ana hasta el 24/11/2026; permisos del mes: 1. | Cliente (iteración 7) |
 
 ## 3. Restricciones
 | ID | Restricción | Regla (Dado / Cuando / Entonces) | Caso de prueba | Origen |
@@ -44,3 +45,4 @@ App para administrar la información del personal de una organización, que faci
 | 1.4 | 2026-11-20 | Se agrega A7 (empleados de ejemplo siempre presentes). |
 | 1.5 | 2026-11-20 | Se agrega R7 (edad y antigüedad máximas de 100 años). |
 | 1.6 | 2026-11-21 | Se agregan A8 (baja de empleados) y R8 (baja consistente); A1 cambia eliminar por dar de baja y R5 aplica solo entre empleados activos. |
+| 1.7 | 2026-11-22 | Se agrega A9 (panel de resumen de RH: plantilla, nómina y ausencias). |
